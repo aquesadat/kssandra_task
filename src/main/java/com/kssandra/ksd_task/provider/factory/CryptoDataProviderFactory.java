@@ -26,7 +26,7 @@ public class CryptoDataProviderFactory {
 
 	@PostConstruct
 	public void initProviders() {
-		providers.forEach(pr -> providersCache.put(pr.getCode(), pr));
+		providers.forEach(pr -> providersCache.put(pr.getType(), pr));
 
 	}
 
