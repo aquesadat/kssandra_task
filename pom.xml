@@ -22,6 +22,7 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<ksd.persistence.version>0.0.1-SNAPSHOT</ksd.persistence.version>
+		<ksd.alphavantage_client.version>0.0.1-SNAPSHOT</ksd.alphavantage_client.version>
 	</properties>
 	<dependencies>
 
@@ -32,6 +33,12 @@
 			<version>${ksd.persistence.version}</version>
 		</dependency>
 		
+		
+		<dependency>
+			<groupId>com.kssandra</groupId>
+			<artifactId>alphavantage_client</artifactId>
+			<version>${ksd.persistence.version}</version>
+		</dependency>
 		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
