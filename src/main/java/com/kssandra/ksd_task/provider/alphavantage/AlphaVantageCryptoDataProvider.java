@@ -12,6 +12,7 @@ import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +20,10 @@ import com.kssandra.alphavantage_client.output.IntraDay;
 import com.kssandra.alphavantage_client.output.SimpleCryptoCurrencyData;
 import com.kssandra.ksd_common.dto.CryptoCurrencyDto;
 import com.kssandra.ksd_common.dto.CryptoDataDto;
+import com.kssandra.ksd_common.dto.PredictionDto;
 import com.kssandra.ksd_common.enums.DataProviderEnum;
+import com.kssandra.ksd_common.util.DateUtils;
+import com.kssandra.ksd_persistence.dao.CryptoCurrencyDao;
 import com.kssandra.ksd_task.provider.CryptoDataProvider;
 
 @Component
@@ -39,6 +43,9 @@ public class AlphaVantageCryptoDataProvider extends CryptoDataProvider {
 	private static final int RQ_SLEEP = 30000;
 
 	private static final int MAX_RQ = 6;
+
+	@Autowired
+	protected CryptoCurrencyDao cryptoCurrDao;
 
 	public String getType() {
 		return DataProviderEnum.AV.toString();
@@ -88,8 +95,8 @@ public class AlphaVantageCryptoDataProvider extends CryptoDataProvider {
 		dto.setHigh(data.getHigh());
 		dto.setLow(data.getLow());
 		dto.setOpen(data.getOpen());
-		dto.setReadTime(data.getDateTime().atZone(ZoneId.of("GMT")).withZoneSameInstant(ZoneId.of("Europe/Madrid"))
-				.toLocalDateTime());
+		dto.setReadTime(data.getDateTime().atZone(ZoneId.of("GMT"))
+				.withZoneSameInstant(ZoneId.of(DateUtils.DEFAULT_OFFSET)).toLocalDateTime());
 		dto.setHigh(data.getHigh());
 		return dto;
 	}
