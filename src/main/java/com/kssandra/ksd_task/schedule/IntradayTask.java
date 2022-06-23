@@ -1,10 +1,8 @@
 package com.kssandra.ksd_task.schedule;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,12 +13,21 @@ import org.springframework.stereotype.Component;
 
 import com.kssandra.ksd_common.dto.CryptoCurrencyDto;
 import com.kssandra.ksd_common.dto.CryptoDataDto;
+import com.kssandra.ksd_common.exception.DataCollectException;
 import com.kssandra.ksd_persistence.dao.CryptoCurrencyDao;
-import com.kssandra.ksd_persistence.dao.CryptoDataDao;
+import com.kssandra.ksd_task.prediction.CryptoDataEval;
 import com.kssandra.ksd_task.prediction.CryptoDataPrediction;
 import com.kssandra.ksd_task.provider.CryptoDataProvider;
 import com.kssandra.ksd_task.provider.factory.CryptoDataProviderFactory;
 
+/**
+ * 
+ * Scheduled task to get intraday data from a provider (like AlphaVantage),
+ * analyze and save it in DB.
+ * 
+ * @author aquesada
+ *
+ */
 @Component
 public class IntradayTask {
 
@@ -33,46 +40,53 @@ public class IntradayTask {
 	private CryptoDataPrediction cxDataProcessor;
 
 	@Autowired
-	protected CryptoCurrencyDao cryptoCurrDao;
+	private CryptoDataEval cxDataEval;
 
 	@Autowired
-	private CryptoDataDao cryptoDataDao;
+	protected CryptoCurrencyDao cryptoCurrDao;
 
+	/**
+	 * Gets intraday data concurrently from a provider, makes predictions and
+	 * finally checks success of old predictions.
+	 */
 	// @Scheduled(cron = "${intraday.cron.expression}")
 	@Scheduled(fixedDelay = Long.MAX_VALUE)
 	public void scheduleTask() {
 
 		LOG.debug("Executing scheduled task");
 
-		List<CryptoCurrencyDto> activeCxCurrs = cryptoCurrDao.getAllActiveCryptoCurrencies();
+		List<CryptoCurrencyDto> activeCxCurrs = cryptoCurrDao.getAllActiveCxCurrencies();
 
-		CryptoDataProvider dataProvider = CryptoDataProviderFactory.getDataProvider(provider);
+		if (!activeCxCurrs.isEmpty()) {
+			try {
+				// Gets the configured provider to operate with
+				CryptoDataProvider dataProvider = CryptoDataProviderFactory.getDataProvider(provider);
 
-		Map<String, List<CryptoDataDto>> dataResult = dataProvider.getIntraDayData(activeCxCurrs);
+				// Gets intraday data from the provider and persists it in DB
+				Map<String, List<CryptoDataDto>> dataResult = dataProvider.collectIntraDayData(activeCxCurrs);
 
-		// Se deja el save fuera por si hay que controlar alguna excepción desde este
-		// punto y guardar o no en función de esto.
-		saveDataResult(dataResult, activeCxCurrs);
+				if (dataResult != null && !dataResult.isEmpty()) {
+					// Checks success of old predictions in a new thread
+					try {
+						Executors.newSingleThreadExecutor()
+								.execute(() -> cxDataEval.evaluatePredictions(dataResult, activeCxCurrs));
+					} catch (Exception ex) {
+						LOG.error(ex.getMessage());
+					}
 
-		cxDataProcessor.evaluatePredictions(dataResult, activeCxCurrs);
+					// Makes new predictions with data previously obtained from the provider
+					cxDataProcessor.predictResults(activeCxCurrs);
 
-		cxDataProcessor.predictResults(activeCxCurrs);
+				} else {
+					LOG.error("Any data has been collected from provider");
+				}
+			} catch (DataCollectException e) {
+				LOG.error(e.getMessage());
+			}
+		} else {
+			LOG.warn("Any cryptocurrency configured as active");
+		}
 
-	}
-
-	public void saveDataResult(Map<String, List<CryptoDataDto>> dataResult, List<CryptoCurrencyDto> activeCxCurrs) {
-
-		Map<String, LocalDateTime> lastInserted = cryptoDataDao.getLastInserted(activeCxCurrs);
-		LOG.info("Saving data results");
-
-		List<CryptoDataDto> temp = new ArrayList<>();
-		dataResult.forEach((key, cxData) -> {
-			LOG.info("Saving data for: {}", key);
-			temp.addAll(cxData.parallelStream().filter(elem -> elem.getReadTime().isAfter(lastInserted.get(key)))
-					.collect(Collectors.toList()));
-		});
-
-		cryptoDataDao.saveAll(temp);
 	}
 
 }

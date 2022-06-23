@@ -1,13 +1,8 @@
 package com.kssandra.ksd_task.provider.alphavantage;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.kssandra.alphavantage_client.connector.AlphaVantageConnector;
 
 public class AlphaVantageWSClient {
-
-	private static final Logger LOG = LoggerFactory.getLogger(AlphaVantageWSClient.class);
 
 	private String cryptoCode;
 
