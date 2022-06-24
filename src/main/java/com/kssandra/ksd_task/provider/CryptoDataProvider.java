@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -17,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.kssandra.alphavantage_client.output.IntraDay;
 import com.kssandra.ksd_common.dto.CryptoCurrencyDto;
 import com.kssandra.ksd_common.dto.CryptoDataDto;
 import com.kssandra.ksd_common.exception.DataCollectException;
@@ -57,7 +57,7 @@ public abstract class CryptoDataProvider {
 		resetDataProvider();
 
 		// Each cxcurrency is exectuted in a new thread
-		activeCxCurrs.forEach(cxCurr -> results.add(submitThread(pool, cxCurr)));
+		activeCxCurrs.forEach(cxCurr -> results.add(pool.submit(() -> callService(cxCurr))));
 		pool.shutdown();
 
 		for (Future<?> result : results) {
@@ -78,17 +78,7 @@ public abstract class CryptoDataProvider {
 		return cryptoData;
 	}
 
-	/**
-	 * Gets an instance of the client to call the WS and submit it in the thread
-	 * pool.
-	 * 
-	 * @param pool   thread pool
-	 * @param cxCurr cryptocurrency to get intraday data
-	 * @return Future with intraday data result from WS
-	 */
-	protected Future<?> submitThread(ExecutorService pool, CryptoCurrencyDto cxCurr) {
-		return pool.submit(getIntraDayClient(cxCurr));
-	}
+	protected abstract IntraDay callService(CryptoCurrencyDto cxCurr);
 
 	/**
 	 * Persists in DB all intraday data (from all the active cryptocurrencies) from
@@ -100,15 +90,24 @@ public abstract class CryptoDataProvider {
 	 */
 	private void saveDataResult(Map<String, List<CryptoDataDto>> dataResult, List<CryptoCurrencyDto> activeCxCurrs) {
 
-		Map<String, LocalDateTime> lastInserted = cryptoDataDao.getLastInserted(activeCxCurrs);
 		LOG.debug("Saving data results");
 
+		Map<String, LocalDateTime> lastInserted = cryptoDataDao.getLastInserted(activeCxCurrs);
+
 		List<CryptoDataDto> dataTosave = new ArrayList<>();
-		dataResult.forEach((key, cxData) -> {
-			LOG.info("Saving data for: {}", key);
-			// Inserts in DB the elements with a date after the last insertion
-			dataTosave.addAll(cxData.parallelStream().filter(elem -> elem.getReadTime().isAfter(lastInserted.get(key)))
-					.collect(Collectors.toList()));
+
+		dataResult.forEach((cxCode, cxData) -> {
+			LOG.info("Saving data for: {}", cxCode);
+			if (lastInserted.get(cxCode) != null) {
+				// Inserts in DB the elements with a date after the last insertion
+				dataTosave.addAll(
+						cxData.parallelStream().filter(elem -> elem.getReadTime().isAfter(lastInserted.get(cxCode)))
+								.collect(Collectors.toList()));
+			} else {
+				LOG.info("New crypto currency -> Initial charge");
+				dataTosave.addAll(cxData.parallelStream().collect(Collectors.toList()));
+			}
+
 		});
 
 		cryptoDataDao.saveAll(dataTosave);
@@ -130,14 +129,6 @@ public abstract class CryptoDataProvider {
 	 * @throws DataCollectException
 	 */
 	protected abstract List<CryptoDataDto> mapIntraDayRs(Object result) throws DataCollectException;
-
-	/**
-	 * Gets a new instance of AlphavantageClient for intraday service
-	 * 
-	 * @param cxCurrency Cryptocurrency code
-	 * @return New instance of AlphavantageClient
-	 */
-	protected abstract Callable getIntraDayClient(CryptoCurrencyDto cxCurrency);
 
 	/**
 	 * Prepares the specific data provider for a new batch of executions

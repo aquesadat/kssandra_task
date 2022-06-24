@@ -60,6 +60,9 @@ public class CryptoDataPrediction {
 	 * @param activeCxCurrs List of active cryptocurrencies
 	 */
 	public void predictResults(List<CryptoCurrencyDto> activeCxCurrs) {
+
+		LOG.debug("Calculating predictions");
+
 		List<PredictionDto> predictions = null;
 
 		for (CryptoCurrencyDto cxCurr : activeCxCurrs) {
@@ -74,6 +77,8 @@ public class CryptoDataPrediction {
 				predictionDao.saveAll(predictions);
 			}
 		}
+
+		LOG.debug("End of calculating predictions");
 	}
 
 	/**

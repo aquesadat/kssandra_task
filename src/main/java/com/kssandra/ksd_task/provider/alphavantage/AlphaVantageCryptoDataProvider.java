@@ -2,8 +2,6 @@ package com.kssandra.ksd_task.provider.alphavantage;
 
 import java.time.ZoneId;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -13,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.kssandra.alphavantage_client.connector.AlphaVantageConnector;
 import com.kssandra.alphavantage_client.output.IntraDay;
 import com.kssandra.alphavantage_client.output.SimpleCryptoCurrencyData;
 import com.kssandra.ksd_common.dto.CryptoCurrencyDto;
@@ -46,12 +45,14 @@ public class AlphaVantageCryptoDataProvider extends CryptoDataProvider {
 	private String interval;
 
 	// Time between batch of calls
-	private static final int RQ_SLEEP = 30000;
+	private static final int RQ_SLEEP = 40000;
 
 	// Max number of concurrent calls in a batch
 	private static final int MAX_RQ = 6;
 
 	private static final String MDATA_CURRENCY_CODE = "2. Digital Currency Code";
+
+	private static final String DEFAULT_EXCH_CURR = "EUR";
 
 	@Autowired
 	protected CryptoCurrencyDao cryptoCurrDao;
@@ -59,15 +60,11 @@ public class AlphaVantageCryptoDataProvider extends CryptoDataProvider {
 	private static AtomicInteger nRequests = new AtomicInteger(1);
 
 	@Override
-	protected AlphaVantageIntradayClient getIntraDayClient(CryptoCurrencyDto cxCurrDto) {
-		return new AlphaVantageIntradayClient(cxCurrDto.getCode(), cxCurrDto.getAvAccountDto().getApiKey(), timeout,
-				baseUrl, interval);
-	}
-
-	@Override
-	protected Future<?> submitThread(ExecutorService pool, CryptoCurrencyDto cxCurr) {
+	protected IntraDay callService(CryptoCurrencyDto cxCurrDto) {
+		AlphaVantageConnector connector = new AlphaVantageConnector(cxCurrDto.getAvAccountDto().getApiKey(), timeout,
+				baseUrl);
 		stopAndGo();// Rq limits due to free api key
-		return pool.submit(getIntraDayClient(cxCurr));
+		return connector.intraDay(cxCurrDto.getCode(), DEFAULT_EXCH_CURR, interval);
 	}
 
 	@Override
@@ -99,7 +96,7 @@ public class AlphaVantageCryptoDataProvider extends CryptoDataProvider {
 			errMsg = "Result from AV is null";
 		}
 
-		throw new DataCollectException(errMsg);
+		throw new DataCollectException("Error mapping response from AlphaVantage: ".concat(errMsg));
 	}
 
 	/**
