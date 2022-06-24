@@ -49,8 +49,8 @@ public class IntradayTask {
 	 * Gets intraday data concurrently from a provider, makes predictions and
 	 * finally checks success of old predictions.
 	 */
-	// @Scheduled(cron = "${intraday.cron.expression}")
-	@Scheduled(fixedDelay = Long.MAX_VALUE)
+	@Scheduled(cron = "${intraday.cron.expression}")
+	// @Scheduled(fixedDelay = Long.MAX_VALUE)
 	public void scheduleTask() {
 
 		LOG.debug("Executing scheduled task");
