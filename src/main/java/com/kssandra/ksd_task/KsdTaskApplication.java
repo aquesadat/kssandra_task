@@ -5,9 +5,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import com.kssandra.ksd_common.util.Generated;
+
 @SpringBootApplication
-@ComponentScan ({"com.kssandra"})
+@ComponentScan({ "com.kssandra" })
 @EnableScheduling
+@Generated
 public class KsdTaskApplication {
 
 	public static void main(String[] args) {

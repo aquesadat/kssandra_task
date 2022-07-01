@@ -32,7 +32,7 @@ public class CryptoDataProviderFactory {
 	 */
 	@PostConstruct
 	public void initProviders() {
-		providers.forEach(pr -> providersCache.put(pr.getType(), pr));
+		providers.forEach(provider -> providersCache.put(provider.getType(), provider));
 	}
 
 	/**
@@ -44,8 +44,10 @@ public class CryptoDataProviderFactory {
 	 */
 	public static CryptoDataProvider getDataProvider(String code) throws DataCollectException {
 
-		if (providersCache.containsKey(code)) {
+		if (code != null && providersCache.containsKey(code)) {
 			return providersCache.get(code);
+		} else if (code == null) {
+			throw new DataCollectException("Data provider is null");
 		} else {
 			throw new DataCollectException("Data provider not valid - ".concat(code));
 		}
