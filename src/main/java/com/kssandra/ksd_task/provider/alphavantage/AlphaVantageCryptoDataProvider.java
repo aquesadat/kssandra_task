@@ -11,9 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.kssandra.alphavantage_client.connector.AlphaVantageConnector;
 import com.kssandra.alphavantage_client.output.IntraDay;
 import com.kssandra.alphavantage_client.output.SimpleCryptoCurrencyData;
+import com.kssandra.alphavantage_client.service.AlphaVantageService;
 import com.kssandra.ksd_common.dto.CryptoCurrencyDto;
 import com.kssandra.ksd_common.dto.CryptoDataDto;
 import com.kssandra.ksd_common.enums.DataProviderEnum;
@@ -57,14 +57,16 @@ public class AlphaVantageCryptoDataProvider extends CryptoDataProvider {
 	@Autowired
 	protected CryptoCurrencyDao cryptoCurrDao;
 
+	@Autowired
+	private AlphaVantageService avService;
+
 	private static AtomicInteger nRequests = new AtomicInteger(1);
 
 	@Override
 	protected IntraDay callService(CryptoCurrencyDto cxCurrDto) {
-		AlphaVantageConnector connector = new AlphaVantageConnector(cxCurrDto.getAvAccountDto().getApiKey(), timeout,
-				baseUrl);
 		stopAndGo();// Rq limits due to free api key
-		return connector.intraDay(cxCurrDto.getCode(), DEFAULT_EXCH_CURR, interval);
+		return avService.intraDay(cxCurrDto.getCode(), DEFAULT_EXCH_CURR, interval,
+				cxCurrDto.getAvAccountDto().getApiKey(), timeout, baseUrl);
 	}
 
 	@Override
@@ -122,7 +124,7 @@ public class AlphaVantageCryptoDataProvider extends CryptoDataProvider {
 	/**
 	 * Limitations due to free api key usage
 	 */
-	public static synchronized void stopAndGo() {
+	private static synchronized void stopAndGo() {
 		if (nRequests.getAndIncrement() % MAX_RQ == 0) {
 			try {
 				Thread.sleep(RQ_SLEEP);
@@ -141,6 +143,22 @@ public class AlphaVantageCryptoDataProvider extends CryptoDataProvider {
 	@Override
 	public String getType() {
 		return DataProviderEnum.AV.toString();
+	}
+
+	public static int getRqSleep() {
+		return RQ_SLEEP;
+	}
+
+	public static int getMaxRq() {
+		return MAX_RQ;
+	}
+
+	public static String getMdataCurrencyCode() {
+		return MDATA_CURRENCY_CODE;
+	}
+
+	public static AtomicInteger getnRequests() {
+		return nRequests;
 	}
 
 }

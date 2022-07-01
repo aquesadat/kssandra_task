@@ -73,7 +73,9 @@ public abstract class CryptoDataProvider {
 			}
 		}
 
-		saveDataResult(cryptoData, activeCxCurrs);
+		if (!cryptoData.isEmpty()) {
+			saveDataResult(cryptoData, activeCxCurrs);
+		}
 
 		return cryptoData;
 	}
