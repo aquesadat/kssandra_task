@@ -21,6 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
@@ -54,8 +55,11 @@ class AlphaVantageCryptoDataProviderTest {
 	@MockBean
 	AlphaVantageService avService;
 
-	@MockBean
-	private CryptoDataDao mockCxDataDao;
+//	@MockBean
+//	private CryptoDataDao mockCxDataDao;
+
+//	@Autowired
+//	private CryptoDataDao cryptoDataDao;
 
 //	@MockBean
 //	CryptoDataProvider mockDataProvider;
@@ -141,7 +145,7 @@ class AlphaVantageCryptoDataProviderTest {
 		dataList2.add(dto2);
 		when(mockAVProvider.mapIntraDayRs(intraDay1)).thenReturn(dataList1);
 		when(mockAVProvider.mapIntraDayRs(intraDay2)).thenReturn(dataList2);
-		doNothing().when(mockCxDataDao).saveAll(anyList());
+		// doNothing().when(mockCxDataDao).saveAll(anyList());
 
 		doCallRealMethod().when(mockAVProvider).collectIntraDayData(activeCxCurrs);
 
