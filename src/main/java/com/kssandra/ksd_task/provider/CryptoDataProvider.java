@@ -90,7 +90,7 @@ public abstract class CryptoDataProvider {
 	 *                      intraday data as value
 	 * @param activeCxCurrs List of active cryptocurrencies
 	 */
-	public void saveDataResult(Map<String, List<CryptoDataDto>> dataResult, List<CryptoCurrencyDto> activeCxCurrs) {
+	protected void saveDataResult(Map<String, List<CryptoDataDto>> dataResult, List<CryptoCurrencyDto> activeCxCurrs) {
 
 		LOG.debug("Saving data results");
 
