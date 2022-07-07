@@ -63,7 +63,7 @@ public class CryptoDataPrediction {
 
 		LOG.debug("Calculating predictions");
 
-		List<PredictionDto> predictions = null;
+		List<PredictionDto> predictions = new ArrayList<>();
 
 		for (CryptoCurrencyDto cxCurr : activeCxCurrs) {
 
@@ -72,63 +72,31 @@ public class CryptoDataPrediction {
 			List<CryptoDataDto> dataToAnalyze = cryptoDataDao.getDataToAnalyze(cxCurr);
 
 			if (dataToAnalyze != null && !dataToAnalyze.isEmpty()) {
-				predictions = getPredictions(dataToAnalyze);
+
+				// Calculates a prediction for each combination of sample size (of real read
+				// data) and time (future)
+				predictCfg.forEach((predictPos, sampleSizes) -> sampleSizes.forEach(sampleSize -> {
+					try {
+						LocalDateTime predictTime = LocalDateTime.now().plusMinutes(predictPos);
+						double predictVal = KSDPrediction.getPredictedValue(
+								getObservedValues(dataToAnalyze, sampleSize), DateUtils.toSeconds(predictTime));
+
+						PredictionDto prediction = new PredictionDto(LocalDateTime.now(),
+								dataToAnalyze.get(0).getCxCurrencyDto(), sampleSize, predictTime, predictVal);
+
+						predictions.add(prediction);
+					} catch (Exception ex) {
+						LOG.error("Error processing sampleSize: {}, predictPos: {} and cxCurr: {}", sampleSize,
+								predictPos, dataToAnalyze.get(0).getCxCurrencyDto().getCode());
+						LOG.error(ex.getMessage());
+					}
+				}));
 
 				predictionDao.saveAll(predictions);
 			}
 		}
 
 		LOG.debug("End of calculating predictions");
-	}
-
-	/**
-	 * Get all the configured predictions for a specific cryptoCurrency.
-	 * 
-	 * @param dataToAnalyze Data read from provided used as observed values
-	 * @return List of predictions for different samples sizes and times in the
-	 *         future
-	 */
-	private List<PredictionDto> getPredictions(List<CryptoDataDto> dataToAnalyze) {
-
-		List<PredictionDto> predictions = new ArrayList<>();
-
-		// Calculates a prediction for each combination of sample size (of real read
-		// data) and time (future)
-		predictCfg.forEach((predictPos, sampleSizes) -> sampleSizes.forEach(sampleSize -> {
-			try {
-				predictions.add(getPrediction(dataToAnalyze, sampleSize, predictPos));
-			} catch (Exception ex) {
-				LOG.error("Error processing sampleSize: {}, predictPos: {} and cxCurr: {}", sampleSize, predictPos,
-						dataToAnalyze.get(0).getCxCurrencyDto().getCode());
-				LOG.error(ex.getMessage());
-			}
-		}));
-
-		return predictions;
-	}
-
-	/**
-	 * Generate a PredictionDto calculating a predicted value for a specific sample
-	 * size and future time
-	 * 
-	 * @param dataToAnalyze Real read data used as observed value
-	 * @param sampleSize    Amount of data to take from dataToAnalyze as sample to
-	 *                      make the prediction
-	 * @param predictPos    Time in future to predict its value
-	 * @return PredictionDto with the predicted value
-	 */
-	private PredictionDto getPrediction(List<CryptoDataDto> dataToAnalyze, int sampleSize, int predictPos) {
-		PredictionDto prediction = new PredictionDto();
-		prediction.setCurrTime(LocalDateTime.now());
-		prediction.setCxCurrencyDto(dataToAnalyze.get(0).getCxCurrencyDto());
-		prediction.setSampleSize(sampleSize);
-		prediction.setPredictTime(LocalDateTime.now().plusMinutes(predictPos));
-
-		Map<Double, Double> observedValues = getObservedValues(dataToAnalyze, sampleSize);
-		prediction.setPredictVal(
-				KSDPrediction.getPredictedValue(observedValues, DateUtils.toSeconds(prediction.getPredictTime())));
-
-		return prediction;
 	}
 
 	/**

@@ -73,10 +73,9 @@ public class CryptoDataEval {
 						LOG.error("Read time: {} is too far from the predicted one: {}", dataRead.getReadTime(),
 								predDto.getPredictTime());
 					}
-
-					predictionDao.saveAll(
-							predictions.stream().filter(e -> e.getSuccess() != null).collect(Collectors.toList()));
 				}
+				predictionDao
+						.saveAll(predictions.stream().filter(e -> e.getSuccess() != null).collect(Collectors.toList()));
 			} else {
 				LOG.error("Predictions is null or empty");
 			}
