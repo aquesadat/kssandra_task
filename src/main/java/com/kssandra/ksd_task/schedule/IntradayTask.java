@@ -37,7 +37,7 @@ public class IntradayTask {
 	private String provider;
 
 	@Autowired
-	private CryptoDataPrediction cxDataProcessor;
+	private CryptoDataPrediction cxDataPrediction;
 
 	@Autowired
 	private CryptoDataEval cxDataEval;
@@ -75,7 +75,7 @@ public class IntradayTask {
 					}
 
 					// Makes new predictions with data previously obtained from the provider
-					cxDataProcessor.predictResults(activeCxCurrs);
+					cxDataPrediction.predictResults(activeCxCurrs);
 
 				} else {
 					LOG.error("Any data has been collected from provider");

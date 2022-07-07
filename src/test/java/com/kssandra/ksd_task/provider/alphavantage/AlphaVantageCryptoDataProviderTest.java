@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.assertj.core.util.Maps;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -95,18 +94,18 @@ class AlphaVantageCryptoDataProviderTest {
 				.asList(new SimpleCryptoCurrencyData(LocalDateTime.now(), 122.38, 123.45, 119.00, 120.54, 4562987)));
 		IntraDay intraDay = new IntraDay(metaData, digitalData);
 
-		AlphaVantageCryptoDataProvider mockAVProvider = mock(AlphaVantageCryptoDataProvider.class);
-		when(mockAVProvider.callService(cxCurr)).thenReturn(intraDay);
+		AlphaVantageCryptoDataProvider avCxDataProvider = mock(AlphaVantageCryptoDataProvider.class);
+		when(avCxDataProvider.callService(cxCurr)).thenReturn(intraDay);
 
 		CryptoDataDto dto = new CryptoDataDto();
 		dto.setCxCurrencyDto(cxCurr);
 		List<CryptoDataDto> dataList = new ArrayList<CryptoDataDto>(Arrays.asList(dto, dto, dto));
-		when(mockAVProvider.mapIntraDayRs(intraDay)).thenReturn(dataList);
+		when(avCxDataProvider.mapIntraDayRs(intraDay)).thenReturn(dataList);
 
-		doCallRealMethod().when(mockAVProvider).collectIntraDayData(activeCxCurrs);
+		doCallRealMethod().when(avCxDataProvider).collectIntraDayData(activeCxCurrs);
 
-		Map<String, List<CryptoDataDto>> result = mockAVProvider.collectIntraDayData(activeCxCurrs);
-		verify(mockAVProvider).callService(cxCurr);
+		Map<String, List<CryptoDataDto>> result = avCxDataProvider.collectIntraDayData(activeCxCurrs);
+		verify(avCxDataProvider).callService(cxCurr);
 		assertTrue(result.containsKey(cxCurr1));
 		assertFalse(result.get(cxCurr1).isEmpty());
 		assertFalse(result.containsKey("CXT2"));
