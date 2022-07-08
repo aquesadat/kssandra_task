@@ -88,7 +88,8 @@ class CryptoDataEvalTest {
 		verify(predictionDao).saveAll(captor.capture());
 		List<PredictionDto> dataToSave = captor.getValue();
 		assertEquals(3, dataToSave.size());
-		assertTrue(dataToSave.stream().allMatch(e -> e.getSampleSize() == 60));
+		assertTrue(dataToSave.stream().allMatch(e -> (e.getSampleSize() == 60 && e.getSuccess() != null)));
+
 	}
 
 }

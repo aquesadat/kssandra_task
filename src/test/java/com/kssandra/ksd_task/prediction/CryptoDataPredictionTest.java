@@ -93,6 +93,8 @@ class CryptoDataPredictionTest {
 		verify(predictionDao).saveAll(captor.capture());
 		List<PredictionDto> dataToSave = captor.getValue();
 		assertFalse(dataToSave.isEmpty());
+		assertTrue(dataToSave.stream().allMatch(d -> (d.getCxCurrencyDto().getCode().equals("CXT1")
+				&& d.getPredictTime() != null && d.getPredictVal() > 0 && d.getSampleSize() > 0)));
 	}
 
 	private void loadTestData(List<CryptoDataDto> dataToAnalyze, String cxCode) {
