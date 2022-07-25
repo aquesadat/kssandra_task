@@ -69,12 +69,12 @@ class CryptoDataEvalTest {
 
 		List<PredictionDto> unanalyzedData = new ArrayList<>();
 		LocalDateTime predDate = LocalDateTime.now().plusSeconds(10);
-		unanalyzedData.add(new PredictionDto(null, cxCurr1, 60, predDate.minusMinutes(15), 90));
-		unanalyzedData.add(new PredictionDto(null, cxCurr1, 60, predDate.minusMinutes(15), 50));
-		unanalyzedData.add(new PredictionDto(null, cxCurr1, 60, predDate.minusMinutes(15), 120));
-		unanalyzedData.add(new PredictionDto(null, cxCurr1, 90, predDate.plusMinutes(30), 90));
-		unanalyzedData.add(new PredictionDto(null, cxCurr1, 90, predDate.plusMinutes(30), 50));
-		unanalyzedData.add(new PredictionDto(null, cxCurr1, 90, predDate.plusMinutes(30), 120));
+		unanalyzedData.add(new PredictionDto(null, cxCurr1, 60, predDate.minusMinutes(15), 90, 15));
+		unanalyzedData.add(new PredictionDto(null, cxCurr1, 60, predDate.minusMinutes(15), 50, 15));
+		unanalyzedData.add(new PredictionDto(null, cxCurr1, 60, predDate.minusMinutes(15), 120, 15));
+		unanalyzedData.add(new PredictionDto(null, cxCurr1, 90, predDate.plusMinutes(30), 90, 30));
+		unanalyzedData.add(new PredictionDto(null, cxCurr1, 90, predDate.plusMinutes(30), 50, 30));
+		unanalyzedData.add(new PredictionDto(null, cxCurr1, 90, predDate.plusMinutes(30), 120, 30));
 
 		// If the list of predictions is empty, any data will be saved
 		when(predictionDao.findUnanalyzed(cxCurr1, readDate)).thenReturn(Collections.emptyList());

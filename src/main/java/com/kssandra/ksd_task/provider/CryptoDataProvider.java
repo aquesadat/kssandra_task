@@ -69,7 +69,7 @@ public abstract class CryptoDataProvider {
 				LOG.error("Interrupted", ie);
 				Thread.currentThread().interrupt();
 			} catch (ExecutionException | DataCollectException e) {
-				LOG.error(e.getMessage());
+				LOG.error("Unexpected error", e);
 			}
 		}
 

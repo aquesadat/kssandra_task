@@ -130,7 +130,7 @@ public class AlphaVantageCryptoDataProvider extends CryptoDataProvider {
 				Thread.sleep(RQ_SLEEP);
 				nRequests.set(1);
 			} catch (InterruptedException e) {
-				LOG.error(e.getMessage());
+				LOG.error("Error sleeping thread", e);
 			}
 		}
 	}
