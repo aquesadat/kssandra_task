@@ -71,7 +71,7 @@ public class IntradayTask {
 						Executors.newSingleThreadExecutor()
 								.execute(() -> cxDataEval.evaluatePredictions(dataResult, activeCxCurrs));
 					} catch (Exception ex) {
-						LOG.error(ex.getMessage());
+						LOG.error("Error:", ex);
 					}
 
 					// Makes new predictions with data previously obtained from the provider
@@ -81,7 +81,7 @@ public class IntradayTask {
 					LOG.error("Any data has been collected from provider");
 				}
 			} catch (DataCollectException e) {
-				LOG.error(e.getMessage());
+				LOG.error("Error collecting data: ", e);
 			}
 		} else {
 			LOG.warn("Any cryptocurrency configured as active");

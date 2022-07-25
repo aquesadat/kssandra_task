@@ -47,8 +47,28 @@ public class CryptoDataPrediction {
 	private static Map<Integer, List<Integer>> initSamples() {
 		Map<Integer, List<Integer>> aux = new TreeMap<>();
 		aux.put(60, Arrays.asList(60, 120, 240));
+		aux.put(120, Arrays.asList(60, 120, 240));
+		aux.put(180, Arrays.asList(60, 120, 240));
+		aux.put(240, Arrays.asList(60, 120, 240));
+		aux.put(300, Arrays.asList(60, 120, 240, 360));
 		aux.put(360, Arrays.asList(360, 720, 1080));
+		aux.put(420, Arrays.asList(360, 720, 1080));
+		aux.put(480, Arrays.asList(360, 720, 1080));
+		aux.put(540, Arrays.asList(360, 720, 1080));
+		aux.put(600, Arrays.asList(360, 720, 1080));
+		aux.put(660, Arrays.asList(360, 720, 1080));
 		aux.put(720, Arrays.asList(720, 1080, 1440));
+		aux.put(780, Arrays.asList(720, 1080, 1440));
+		aux.put(840, Arrays.asList(720, 1080, 1440));
+		aux.put(900, Arrays.asList(720, 1080, 1440));
+		aux.put(960, Arrays.asList(720, 1080, 1440));
+		aux.put(1020, Arrays.asList(720, 1080, 1440));
+		aux.put(1080, Arrays.asList(720, 1080, 1440));
+		aux.put(1140, Arrays.asList(720, 1080, 1440));
+		aux.put(1200, Arrays.asList(720, 1080, 1440));
+		aux.put(1260, Arrays.asList(720, 1080, 1440));
+		aux.put(1320, Arrays.asList(720, 1080, 1440));
+		aux.put(1380, Arrays.asList(720, 1080, 1440));
 		aux.put(1440, Arrays.asList(1440, 2100));
 
 		return aux;
@@ -75,21 +95,22 @@ public class CryptoDataPrediction {
 
 				// Calculates a prediction for each combination of sample size (of real read
 				// data) and time (future)
-				predictCfg.forEach((predictPos, sampleSizes) -> sampleSizes.forEach(sampleSize -> {
+				predictCfg.forEach((advance, sampleSizes) -> sampleSizes.forEach(sampleSize -> {
+
 					try {
-						LocalDateTime predictTime = LocalDateTime.now().plusMinutes(predictPos);
+						LocalDateTime predictTime = LocalDateTime.now().plusMinutes(advance).withSecond(0);
 						double predictVal = KSDPrediction.getPredictedValue(
 								getObservedValues(dataToAnalyze, sampleSize), DateUtils.toSeconds(predictTime));
 
 						PredictionDto prediction = new PredictionDto(LocalDateTime.now(),
-								dataToAnalyze.get(0).getCxCurrencyDto(), sampleSize, predictTime, predictVal);
+								dataToAnalyze.get(0).getCxCurrencyDto(), sampleSize, predictTime, predictVal, advance);
 
 						predictions.add(prediction);
 					} catch (Exception ex) {
-						LOG.error("Error processing sampleSize: {}, predictPos: {} and cxCurr: {}", sampleSize,
-								predictPos, dataToAnalyze.get(0).getCxCurrencyDto().getCode());
-						LOG.error(ex.getMessage());
+						LOG.error("Error processing sampleSize: {}, advance: {} and cxCurr: {}", sampleSize, advance,
+								dataToAnalyze.get(0).getCxCurrencyDto().getCode(), ex);
 					}
+
 				}));
 
 				predictionDao.saveAll(predictions);

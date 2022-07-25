@@ -18,8 +18,6 @@ import java.util.Map;
 
 import org.assertj.core.util.Maps;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -40,7 +38,6 @@ import com.kssandra.ksd_persistence.dao.CryptoCurrencyDao;
  *
  */
 @SpringBootTest
-@ExtendWith(MockitoExtension.class)
 class AlphaVantageCryptoDataProviderTest {
 
 	@Autowired
@@ -61,6 +58,8 @@ class AlphaVantageCryptoDataProviderTest {
 
 		CryptoCurrencyDto cxCurrDto = new CryptoCurrencyDto("CXT", "Crypto Currency Test", new AVAccountDto(), true);
 
+		// If maxRq is exceeded, application should wait some time (rqSleep) until call
+		// service again
 		for (int i = 1; i < AlphaVantageCryptoDataProvider.getMaxRq(); i++) {
 			long initTime = System.currentTimeMillis();
 			avDataProvider.callService(cxCurrDto);

@@ -46,6 +46,8 @@
 			<version>${ksd.core.version}</version>
 		</dependency>
 		
+		<!-- External dependencies -->
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
