@@ -36,10 +36,10 @@ public class IntradayTask {
 	@Value(value = "${crypto.data.provider}")
 	private String provider;
 
-	@Value(value = "db.max.stored.cxdata")
+	@Value(value = "${db.max.stored.cxdata}")
 	private int maxStoredCxData;
 
-	@Value(value = "db.max.stored.prediction")
+	@Value(value = "${db.max.stored.prediction}")
 	private int maxStoredPrediction;
 
 	@Autowired
@@ -93,6 +93,8 @@ public class IntradayTask {
 			LOG.warn("Any cryptocurrency configured as active");
 		}
 
+		// cxDataPrediction.clearOld(Integer.valueOf(maxStoredCxData),
+		// Integer.valueOf(maxStoredPrediction));
 		cxDataPrediction.clearOld(maxStoredCxData, maxStoredPrediction);
 
 	}
