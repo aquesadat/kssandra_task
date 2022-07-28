@@ -16,10 +16,12 @@ import org.springframework.stereotype.Component;
 
 import com.kssandra.ksd_common.dto.CryptoCurrencyDto;
 import com.kssandra.ksd_common.dto.CryptoDataDto;
+import com.kssandra.ksd_common.dto.PredictionCfgDto;
 import com.kssandra.ksd_common.dto.PredictionDto;
 import com.kssandra.ksd_common.util.DateUtils;
 import com.kssandra.ksd_core.prediction.KSDPrediction;
 import com.kssandra.ksd_persistence.dao.CryptoDataDao;
+import com.kssandra.ksd_persistence.dao.PredictionCfgDao;
 import com.kssandra.ksd_persistence.dao.PredictionDao;
 
 /**
@@ -39,39 +41,27 @@ public class CryptoDataPrediction {
 	@Autowired
 	private PredictionDao predictionDao;
 
+	@Autowired
+	private PredictionCfgDao predictionCfgDao;
+
 	// In minutes. Key: time in future to predict. Value: different sample sizes to
 	// take
 	// as observed to make the prediction.
-	private static final Map<Integer, List<Integer>> predictCfg = initSamples();
+	private Map<Integer, List<Integer>> getPredictCfgs() {
+		Map<Integer, List<Integer>> predictCfgs = new TreeMap<>();
 
-	private static Map<Integer, List<Integer>> initSamples() {
-		Map<Integer, List<Integer>> aux = new TreeMap<>();
-		aux.put(60, Arrays.asList(60, 120, 240));
-		aux.put(120, Arrays.asList(60, 120, 240));
-		aux.put(180, Arrays.asList(60, 120, 240));
-		aux.put(240, Arrays.asList(60, 120, 240));
-		aux.put(300, Arrays.asList(60, 120, 240, 360));
-		aux.put(360, Arrays.asList(360, 720, 1080));
-		aux.put(420, Arrays.asList(360, 720, 1080));
-		aux.put(480, Arrays.asList(360, 720, 1080));
-		aux.put(540, Arrays.asList(360, 720, 1080));
-		aux.put(600, Arrays.asList(360, 720, 1080));
-		aux.put(660, Arrays.asList(360, 720, 1080));
-		aux.put(720, Arrays.asList(720, 1080, 1440));
-		aux.put(780, Arrays.asList(720, 1080, 1440));
-		aux.put(840, Arrays.asList(720, 1080, 1440));
-		aux.put(900, Arrays.asList(720, 1080, 1440));
-		aux.put(960, Arrays.asList(720, 1080, 1440));
-		aux.put(1020, Arrays.asList(720, 1080, 1440));
-		aux.put(1080, Arrays.asList(720, 1080, 1440));
-		aux.put(1140, Arrays.asList(720, 1080, 1440));
-		aux.put(1200, Arrays.asList(720, 1080, 1440));
-		aux.put(1260, Arrays.asList(720, 1080, 1440));
-		aux.put(1320, Arrays.asList(720, 1080, 1440));
-		aux.put(1380, Arrays.asList(720, 1080, 1440));
-		aux.put(1440, Arrays.asList(1440, 2100));
+		List<PredictionCfgDto> activeCfgs = predictionCfgDao.findAllActive();
 
-		return aux;
+		activeCfgs.forEach(predictCfg -> {
+			if (predictCfgs.containsKey(predictCfg.getAdvance())) {
+				predictCfgs.get(predictCfg.getAdvance()).add(predictCfg.getSampleSize());
+			} else {
+				predictCfgs.put(predictCfg.getAdvance(), new ArrayList<>(Arrays.asList(predictCfg.getSampleSize())));
+			}
+		});
+
+		return predictCfgs;
+
 	}
 
 	/**
@@ -95,8 +85,7 @@ public class CryptoDataPrediction {
 
 				// Calculates a prediction for each combination of sample size (of real read
 				// data) and time (future)
-				predictCfg.forEach((advance, sampleSizes) -> sampleSizes.forEach(sampleSize -> {
-
+				getPredictCfgs().forEach((advance, sampleSizes) -> sampleSizes.forEach(sampleSize -> {
 					try {
 						LocalDateTime predictTime = LocalDateTime.now().plusMinutes(advance).withSecond(0).withNano(0);
 						double predictVal = KSDPrediction.getPredictedValue(
@@ -138,6 +127,20 @@ public class CryptoDataPrediction {
 				.sorted((e1, e2) -> e2.getReadTime().compareTo(e1.getReadTime()))
 				.collect(Collectors.toMap(keyMapper, valueMapper));
 
+	}
+
+	/**
+	 * Clear old info from bbdd
+	 * 
+	 * @param maxStoredPrediction
+	 * @param maxStoredCxData
+	 */
+
+	public void clearOld(int maxStoredCxData, int maxStoredPrediction) {
+		int recordsDeleted = cryptoDataDao.deleteBefore(LocalDateTime.now().minusDays(maxStoredCxData));
+		LOG.info("{} rows deleted from CryptoData table.", recordsDeleted);
+		recordsDeleted = predictionDao.deleteBefore(LocalDateTime.now().minusDays(maxStoredPrediction));
+		LOG.info("{} rows deleted from Predicition table.", recordsDeleted);
 	}
 
 }

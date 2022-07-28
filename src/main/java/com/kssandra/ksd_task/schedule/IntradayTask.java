@@ -36,6 +36,12 @@ public class IntradayTask {
 	@Value(value = "${crypto.data.provider}")
 	private String provider;
 
+	@Value(value = "db.max.stored.cxdata")
+	private int maxStoredCxData;
+
+	@Value(value = "db.max.stored.prediction")
+	private int maxStoredPrediction;
+
 	@Autowired
 	private CryptoDataPrediction cxDataPrediction;
 
@@ -50,7 +56,7 @@ public class IntradayTask {
 	 * finally checks success of old predictions.
 	 */
 	@Scheduled(cron = "${intraday.cron.expression}")
-	// Scheduled(fixedDelay = Long.MAX_VALUE)
+	// @Scheduled(fixedDelay = Long.MAX_VALUE)
 	public void scheduleTask() {
 
 		LOG.debug("Executing scheduled task");
@@ -86,6 +92,8 @@ public class IntradayTask {
 		} else {
 			LOG.warn("Any cryptocurrency configured as active");
 		}
+
+		cxDataPrediction.clearOld(maxStoredCxData, maxStoredPrediction);
 
 	}
 
