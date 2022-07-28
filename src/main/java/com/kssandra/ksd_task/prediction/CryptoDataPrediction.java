@@ -98,7 +98,7 @@ public class CryptoDataPrediction {
 				predictCfg.forEach((advance, sampleSizes) -> sampleSizes.forEach(sampleSize -> {
 
 					try {
-						LocalDateTime predictTime = LocalDateTime.now().plusMinutes(advance).withSecond(0);
+						LocalDateTime predictTime = LocalDateTime.now().plusMinutes(advance).withSecond(0).withNano(0);
 						double predictVal = KSDPrediction.getPredictedValue(
 								getObservedValues(dataToAnalyze, sampleSize), DateUtils.toSeconds(predictTime));
 
@@ -122,7 +122,7 @@ public class CryptoDataPrediction {
 
 	/**
 	 * Generates a map of observed data where the key is time (when was the
-	 * observation) and the value is price (what was de value at that time)
+	 * observation) and the value is price (what was the value at that time)
 	 * 
 	 * @param dataToAnalyze Real read data
 	 * @param sampleSize    Size of the real data sample
