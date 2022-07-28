@@ -50,7 +50,7 @@ public class IntradayTask {
 	 * finally checks success of old predictions.
 	 */
 	@Scheduled(cron = "${intraday.cron.expression}")
-	// @Scheduled(fixedDelay = Long.MAX_VALUE)
+	// Scheduled(fixedDelay = Long.MAX_VALUE)
 	public void scheduleTask() {
 
 		LOG.debug("Executing scheduled task");

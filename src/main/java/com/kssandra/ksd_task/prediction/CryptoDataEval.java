@@ -61,8 +61,12 @@ public class CryptoDataEval {
 				for (PredictionDto predDto : predictions) {
 					// For each unanalyzed prediction found in DB, gets the real data read from
 					// provider when its read time is before to the prediction time.
+//					CryptoDataDto dataRead = data.stream()
+//							.filter(item -> item.getReadTime().isBefore(predDto.getPredictTime()))
+//							.max((e1, e2) -> e1.getReadTime().compareTo(e2.getReadTime())).get();
+
 					CryptoDataDto dataRead = data.stream()
-							.filter(item -> item.getReadTime().isBefore(predDto.getPredictTime()))
+							.filter(item -> item.getReadTime().compareTo(predDto.getPredictTime()) <= 0)
 							.max((e1, e2) -> e1.getReadTime().compareTo(e2.getReadTime())).get();
 
 					if (DateUtils.toSeconds(predDto.getPredictTime())
