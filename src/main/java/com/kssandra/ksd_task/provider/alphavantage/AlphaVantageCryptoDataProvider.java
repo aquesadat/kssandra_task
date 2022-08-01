@@ -44,6 +44,9 @@ public class AlphaVantageCryptoDataProvider extends CryptoDataProvider {
 	@Value("${alphavantage.intraday.interval}")
 	private String interval;
 
+	@Value("${alphavantage.intraday.outputsize}")
+	private String outputSize;
+
 	// Time between batch of calls
 	private static final int RQ_SLEEP = 40000;
 
@@ -66,7 +69,7 @@ public class AlphaVantageCryptoDataProvider extends CryptoDataProvider {
 	protected IntraDay callService(CryptoCurrencyDto cxCurrDto) {
 		stopAndGo();// Rq limits due to free api key
 		return avService.intraDay(cxCurrDto.getCode(), DEFAULT_EXCH_CURR, interval,
-				cxCurrDto.getAvAccountDto().getApiKey(), timeout, baseUrl);
+				cxCurrDto.getAvAccountDto().getApiKey(), timeout, baseUrl, outputSize);
 	}
 
 	@Override
