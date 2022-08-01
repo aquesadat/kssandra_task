@@ -3,6 +3,7 @@ package com.kssandra.ksd_task.prediction;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -61,22 +62,24 @@ public class CryptoDataEval {
 				for (PredictionDto predDto : predictions) {
 					// For each unanalyzed prediction found in DB, gets the real data read from
 					// provider when its read time is before to the prediction time.
-//					CryptoDataDto dataRead = data.stream()
-//							.filter(item -> item.getReadTime().isBefore(predDto.getPredictTime()))
-//							.max((e1, e2) -> e1.getReadTime().compareTo(e2.getReadTime())).get();
-
-					CryptoDataDto dataRead = data.stream()
+					Optional<CryptoDataDto> dataRead = data.stream()
 							.filter(item -> item.getReadTime().compareTo(predDto.getPredictTime()) <= 0)
-							.max((e1, e2) -> e1.getReadTime().compareTo(e2.getReadTime())).get();
+							.max((e1, e2) -> e1.getReadTime().compareTo(e2.getReadTime()));
 
-					if (DateUtils.toSeconds(predDto.getPredictTime())
-							- DateUtils.toSeconds(dataRead.getReadTime()) < 60) { // 60s as max margin. Predictions
-																					// can´t be done at 00s
-						predDto.setSuccess(getSuccess(dataRead, predDto.getPredictVal()));
+					if (dataRead.isPresent()) {
+						if (DateUtils.toSeconds(predDto.getPredictTime())
+								- DateUtils.toSeconds(dataRead.get().getReadTime()) < 60) { // 60s as max margin.
+																							// Predictions
+							// can´t be done at 00s
+							predDto.setSuccess(getSuccess(dataRead.get(), predDto.getPredictVal()));
+						} else {
+							LOG.error("Read time: {} is too far from the predicted one: {}",
+									dataRead.get().getReadTime(), predDto.getPredictTime());
+						}
 					} else {
-						LOG.error("Read time: {} is too far from the predicted one: {}", dataRead.getReadTime(),
-								predDto.getPredictTime());
+						LOG.warn("Existing prediction (id: {}) is too old to check its success.", predDto.getId());
 					}
+
 				}
 				predictionDao
 						.saveAll(predictions.stream().filter(e -> e.getSuccess() != null).collect(Collectors.toList()));
