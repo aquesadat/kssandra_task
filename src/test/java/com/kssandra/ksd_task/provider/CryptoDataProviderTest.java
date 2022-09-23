@@ -90,7 +90,7 @@ class CryptoDataProviderTest {
 		assertEquals(3, result.get(cxCode1).size());
 		assertEquals(2, result.get(cxCode2).size());
 
-		// If any active crypto currency is provided as input, the collectIntraDayData
+		// If no active crypto currency is provided as input, the collectIntraDayData
 		// returns an empty list
 		assertTrue(cryptoDataProvider.collectIntraDayData(Collections.emptyList()).isEmpty());
 		assertEquals(1, AlphaVantageCryptoDataProvider.getnRequests().get());
@@ -144,8 +144,8 @@ class CryptoDataProviderTest {
 		// its readDate before lastInsertedDate
 		assertEquals(2, dataToSave.stream().filter(elem -> elem.getCxCurrencyDto().getCode().equals(cxCode1)).count());
 
-		// All 3 cryptoDataDto will be saved for CXT2 because any previous data was
-		// inserted in DB (any lastInserted date exists for CXT2).
+		// All 3 cryptoDataDto will be saved for CXT2 because no previous data was
+		// inserted in DB (no lastInserted date exists for CXT2).
 		assertEquals(3, dataToSave.stream().filter(elem -> elem.getCxCurrencyDto().getCode().equals(cxCode2)).count());
 
 	}

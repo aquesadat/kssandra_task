@@ -67,7 +67,7 @@ class IntradayTaskTest {
 		verify(cxDataEval, never()).evaluatePredictions(anyMap(), anyList());
 		verify(cxDataPrediction, never()).predictResults(anyList());
 
-		// If any data is recovered from provider, any prediction will be made
+		// If no data is recovered from provider, no prediction will be made
 		String cxCode1 = "CXT1";
 		String cxCode2 = "CXT2";
 		CryptoCurrencyDto cxCurr1 = new CryptoCurrencyDto(cxCode1);

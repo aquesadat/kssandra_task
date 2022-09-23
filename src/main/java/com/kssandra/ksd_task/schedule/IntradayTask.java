@@ -84,13 +84,13 @@ public class IntradayTask {
 					cxDataPrediction.predictResults(activeCxCurrs);
 
 				} else {
-					LOG.error("Any data has been collected from provider");
+					LOG.error("No data has been collected from provider");
 				}
 			} catch (DataCollectException e) {
 				LOG.error("Error collecting data: ", e);
 			}
 		} else {
-			LOG.warn("Any cryptocurrency configured as active");
+			LOG.warn("No cryptocurrency configured as active");
 		}
 
 		// cxDataPrediction.clearOld(Integer.valueOf(maxStoredCxData),
