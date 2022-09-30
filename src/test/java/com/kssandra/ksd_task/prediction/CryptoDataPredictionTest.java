@@ -24,8 +24,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import com.kssandra.ksd_common.dto.CryptoCurrencyDto;
 import com.kssandra.ksd_common.dto.CryptoDataDto;
+import com.kssandra.ksd_common.dto.PredictionCfgDto;
 import com.kssandra.ksd_common.dto.PredictionDto;
 import com.kssandra.ksd_persistence.dao.CryptoDataDao;
+import com.kssandra.ksd_persistence.dao.PredictionCfgDao;
 import com.kssandra.ksd_persistence.dao.PredictionDao;
 
 /**
@@ -43,6 +45,9 @@ class CryptoDataPredictionTest {
 
 	@MockBean
 	PredictionDao predictionDao;
+
+	@MockBean
+	PredictionCfgDao predictionCfgDao;
 
 	/**
 	 * Test method for
@@ -72,7 +77,9 @@ class CryptoDataPredictionTest {
 		cxData.setHigh(100);
 		cxData.setLow(75);
 		dataToAnalyze.add(cxData);
+		when(predictionCfgDao.findAllActive()).thenReturn(getActivePredictionsCfg());
 		cryptoDataPrediction.predictResults(activeCxCurrs);
+
 		verify(predictionDao, atLeast(1)).saveAll(anyList());
 
 	}
@@ -88,6 +95,7 @@ class CryptoDataPredictionTest {
 		when(cryptoDataDao.getDataToAnalyze(cxCurr1)).thenReturn(dataToAnalyze);
 
 		loadTestData(dataToAnalyze, cxCode1);
+		when(predictionCfgDao.findAllActive()).thenReturn(getActivePredictionsCfg());
 		cryptoDataPrediction.predictResults(activeCxCurrs);
 		ArgumentCaptor<List<PredictionDto>> captor = ArgumentCaptor.forClass(List.class);
 		verify(predictionDao).saveAll(captor.capture());
@@ -107,6 +115,15 @@ class CryptoDataPredictionTest {
 			cxData.setLow(75);
 			dataToAnalyze.add(cxData);
 		}
+	}
+
+	private List<PredictionCfgDto> getActivePredictionsCfg() {
+		List<PredictionCfgDto> activePredictCfgs = new ArrayList<>();
+		activePredictCfgs.add(new PredictionCfgDto(15, 45));
+		activePredictCfgs.add(new PredictionCfgDto(15, 60));
+		activePredictCfgs.add(new PredictionCfgDto(30, 45));
+		activePredictCfgs.add(new PredictionCfgDto(30, 60));
+		return activePredictCfgs;
 	}
 
 }

@@ -45,8 +45,7 @@ public class CryptoDataPrediction {
 	private PredictionCfgDao predictionCfgDao;
 
 	// In minutes. Key: time in future to predict. Value: different sample sizes to
-	// take
-	// as observed to make the prediction.
+	// take as observed to make the prediction.
 	private Map<Integer, List<Integer>> getPredictCfgs() {
 		Map<Integer, List<Integer>> predictCfgs = new TreeMap<>();
 
