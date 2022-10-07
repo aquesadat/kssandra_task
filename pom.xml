@@ -21,9 +21,9 @@
 
 	<properties>
 		<java.version>1.8</java.version>
-		<ksd.persistence.version>0.0.1-SNAPSHOT</ksd.persistence.version>
-		<ksd.alphavantage_client.version>0.0.1-SNAPSHOT</ksd.alphavantage_client.version>
-		<ksd.core.version>0.0.1-SNAPSHOT</ksd.core.version>
+		<ksd.persistence.version>0.0.2-SNAPSHOT</ksd.persistence.version>
+		<ksd.alphavantage_client.version>0.0.2-SNAPSHOT</ksd.alphavantage_client.version>
+		<ksd.core.version>0.0.2-SNAPSHOT</ksd.core.version>
 	</properties>
 	<dependencies>
 
