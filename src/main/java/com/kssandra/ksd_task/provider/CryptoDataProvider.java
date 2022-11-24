@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.kssandra.alphavantage_client.output.IntraDay;
 import com.kssandra.ksd_common.dto.CryptoCurrencyDto;
 import com.kssandra.ksd_common.dto.CryptoDataDto;
 import com.kssandra.ksd_common.exception.DataCollectException;
@@ -54,10 +53,11 @@ public abstract class CryptoDataProvider {
 		}
 
 		// Preparing for a new batch of executions
-		resetDataProvider();
+		prepareDataProvider();
 
 		// Each cxcurrency is exectuted in a new thread
 		activeCxCurrs.forEach(cxCurr -> results.add(pool.submit(() -> callService(cxCurr))));
+
 		pool.shutdown();
 
 		for (Future<?> result : results) {
@@ -80,7 +80,7 @@ public abstract class CryptoDataProvider {
 		return cryptoData;
 	}
 
-	protected abstract IntraDay callService(CryptoCurrencyDto cxCurr);
+	protected abstract Object callService(CryptoCurrencyDto cxCurr);
 
 	/**
 	 * Persists in DB all intraday data (from all the active cryptocurrencies) from
@@ -135,6 +135,6 @@ public abstract class CryptoDataProvider {
 	/**
 	 * Prepares the specific data provider for a new batch of executions
 	 */
-	protected abstract void resetDataProvider();
+	protected abstract void prepareDataProvider();
 
 }

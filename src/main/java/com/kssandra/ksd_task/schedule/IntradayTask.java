@@ -93,8 +93,6 @@ public class IntradayTask {
 			LOG.warn("No cryptocurrency configured as active");
 		}
 
-		// cxDataPrediction.clearOld(Integer.valueOf(maxStoredCxData),
-		// Integer.valueOf(maxStoredPrediction));
 		cxDataPrediction.clearOld(maxStoredCxData, maxStoredPrediction);
 
 	}

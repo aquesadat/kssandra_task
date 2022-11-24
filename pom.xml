@@ -23,6 +23,7 @@
 		<java.version>1.8</java.version>
 		<ksd.persistence.version>0.0.2-SNAPSHOT</ksd.persistence.version>
 		<ksd.alphavantage_client.version>0.0.2-SNAPSHOT</ksd.alphavantage_client.version>
+		<ksd.coingecko_client.version>0.0.1-SNAPSHOT</ksd.coingecko_client.version>
 		<ksd.core.version>0.0.2-SNAPSHOT</ksd.core.version>
 	</properties>
 	<dependencies>
@@ -37,7 +38,13 @@
 		<dependency>
 			<groupId>com.kssandra</groupId>
 			<artifactId>alphavantage_client</artifactId>
-			<version>${ksd.persistence.version}</version>
+			<version>${ksd.alphavantage_client.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.kssandra</groupId>
+			<artifactId>coingecko_client</artifactId>
+			<version>${ksd.coingecko_client.version}</version>
 		</dependency>
 		
 		<dependency>
