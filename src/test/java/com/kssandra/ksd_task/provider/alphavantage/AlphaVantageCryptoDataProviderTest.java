@@ -193,7 +193,7 @@ class AlphaVantageCryptoDataProviderTest {
 	 */
 	@Test
 	void testResetDataProvider() {
-		avDataProvider.resetDataProvider();
+		avDataProvider.prepareDataProvider();
 		assertEquals(1, AlphaVantageCryptoDataProvider.getnRequests().get());
 	}
 

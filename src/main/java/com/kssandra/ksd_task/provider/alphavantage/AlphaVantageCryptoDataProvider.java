@@ -120,7 +120,6 @@ public class AlphaVantageCryptoDataProvider extends CryptoDataProvider {
 		dto.setOpen(data.getOpen());
 		dto.setReadTime(data.getDateTime().atZone(ZoneId.of("GMT"))
 				.withZoneSameInstant(ZoneId.of(DateUtils.DEFAULT_OFFSET)).toLocalDateTime());
-		dto.setHigh(data.getHigh());
 		return dto;
 	}
 
@@ -139,7 +138,7 @@ public class AlphaVantageCryptoDataProvider extends CryptoDataProvider {
 	}
 
 	@Override
-	protected void resetDataProvider() {
+	protected void prepareDataProvider() {
 		nRequests.set(1);
 	}
 

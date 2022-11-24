@@ -15,6 +15,7 @@ import com.kssandra.ksd_common.dto.CryptoCurrencyDto;
 import com.kssandra.ksd_common.dto.PredictionDto;
 import com.kssandra.ksd_common.util.DateUtils;
 import com.kssandra.ksd_common.dto.CryptoDataDto;
+import com.kssandra.ksd_persistence.dao.CryptoDataDao;
 import com.kssandra.ksd_persistence.dao.PredictionDao;
 
 /**
@@ -32,6 +33,9 @@ public class CryptoDataEval {
 	@Autowired
 	private PredictionDao predictionDao;
 
+	@Autowired
+	private CryptoDataDao cryptoDataDao;
+
 	/**
 	 * For each crypto currency: Get its predictions from bbdd, calculates the
 	 * success of them comparing with the real data and persists the results in
@@ -47,6 +51,12 @@ public class CryptoDataEval {
 		LOG.debug("Evaluating predictions");
 
 		dataResult.forEach((cxCode, data) -> {
+
+			// If only exists the current price (depending on the provider) , gets from DB
+			// the last 48h prices in order to calculate predictions
+			if (data.size() == 1) {
+				data = cryptoDataDao.getDataToAnalyze(data.get(0).getCxCurrencyDto());
+			}
 
 			// Gets time of the last data obtained from provider
 			LocalDateTime predictTime = data.stream().max((e1, e2) -> e1.getReadTime().compareTo(e2.getReadTime()))
