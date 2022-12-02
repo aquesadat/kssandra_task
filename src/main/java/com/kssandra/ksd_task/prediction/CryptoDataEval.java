@@ -78,9 +78,14 @@ public class CryptoDataEval {
 
 					if (dataRead.isPresent()) {
 						if (DateUtils.toSeconds(predDto.getPredictTime())
-								- DateUtils.toSeconds(dataRead.get().getReadTime()) < 60) { // 60s as max margin.
-																							// Predictions
+								- DateUtils.toSeconds(dataRead.get().getReadTime()) < 60) { // 60s as prefered margin.
 							// can´t be done at 00s
+							predDto.setSuccess(getSuccess(dataRead.get(), predDto.getPredictVal()));
+						} else if (DateUtils.toSeconds(predDto.getPredictTime())
+								- DateUtils.toSeconds(dataRead.get().getReadTime()) < 1000) { // 15m aprox. as max
+																								// margin
+							LOG.warn("Read time: {} is a bit far from the predicted one: {}",
+									dataRead.get().getReadTime(), predDto.getPredictTime());
 							predDto.setSuccess(getSuccess(dataRead.get(), predDto.getPredictVal()));
 						} else {
 							LOG.error("Read time: {} is too far from the predicted one: {}",
