@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Component;
 import com.kssandra.ksd_common.dto.CryptoCurrencyDto;
 import com.kssandra.ksd_common.dto.CryptoDataDto;
 import com.kssandra.ksd_common.exception.DataCollectException;
+import com.kssandra.ksd_common.logger.KSDLoggerFactory;
 import com.kssandra.ksd_persistence.dao.CryptoCurrencyDao;
 import com.kssandra.ksd_task.prediction.CryptoDataEval;
 import com.kssandra.ksd_task.prediction.CryptoDataPrediction;
@@ -31,7 +31,7 @@ import com.kssandra.ksd_task.provider.factory.CryptoDataProviderFactory;
 @Component
 public class IntradayTask {
 
-	private static final Logger LOG = LoggerFactory.getLogger(IntradayTask.class);
+	private static final Logger LOG = KSDLoggerFactory.getLogger();
 
 	@Value(value = "${crypto.data.provider}")
 	private String provider;

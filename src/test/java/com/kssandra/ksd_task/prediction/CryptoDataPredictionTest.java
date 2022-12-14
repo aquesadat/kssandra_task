@@ -12,7 +12,6 @@ import static org.mockito.ArgumentMatchers.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -63,7 +62,7 @@ class CryptoDataPredictionTest {
 		// If there isn´t data to analyze, any prediction will be saved
 		String cxCode1 = "CXT1";
 		CryptoCurrencyDto cxCurr1 = new CryptoCurrencyDto(cxCode1);
-		List<CryptoCurrencyDto> activeCxCurrs = new ArrayList<CryptoCurrencyDto>(Arrays.asList(cxCurr1));
+		List<CryptoCurrencyDto> activeCxCurrs = List.of(cxCurr1);
 		List<CryptoDataDto> dataToAnalyze = new ArrayList<>();
 		when(cryptoDataDao.getDataToAnalyze(cxCurr1)).thenReturn(dataToAnalyze);
 
@@ -90,7 +89,7 @@ class CryptoDataPredictionTest {
 		List<CryptoDataDto> dataToAnalyze = new ArrayList<>();
 		String cxCode1 = "CXT1";
 		CryptoCurrencyDto cxCurr1 = new CryptoCurrencyDto(cxCode1);
-		List<CryptoCurrencyDto> activeCxCurrs = new ArrayList<CryptoCurrencyDto>(Arrays.asList(cxCurr1));
+		List<CryptoCurrencyDto> activeCxCurrs = List.of(cxCurr1);
 
 		when(cryptoDataDao.getDataToAnalyze(cxCurr1)).thenReturn(dataToAnalyze);
 

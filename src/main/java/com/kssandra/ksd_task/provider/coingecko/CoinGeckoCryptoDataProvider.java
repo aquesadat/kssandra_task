@@ -2,20 +2,20 @@ package com.kssandra.ksd_task.provider.coingecko;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import com.kssandra.ksd_common.dto.CryptoCurrencyDto;
 import com.kssandra.ksd_common.dto.CryptoDataDto;
 import com.kssandra.ksd_common.enums.DataProviderEnum;
 import com.kssandra.ksd_common.exception.DataCollectException;
+import com.kssandra.ksd_common.logger.KSDLoggerFactory;
 import com.kssandra.ksd_common.util.DateUtils;
 import com.kssandra.ksd_persistence.dao.CryptoCurrencyDao;
 import com.kssandra.ksd_task.provider.CryptoDataProvider;
@@ -31,10 +31,10 @@ import com.litesoftwares.coingecko.impl.CoinGeckoApiClientImpl;
 @Component
 public class CoinGeckoCryptoDataProvider extends CryptoDataProvider {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CoinGeckoCryptoDataProvider.class);
+	private static final Logger LOG = KSDLoggerFactory.getLogger();
 
 	// Time between batch of calls
-	private static final int RQ_SLEEP = 0;
+	private static final int RQ_SLEEP = 1000;
 
 	// Max number of concurrent calls in a batch
 	private static final int MAX_RQ = 0;
@@ -48,7 +48,7 @@ public class CoinGeckoCryptoDataProvider extends CryptoDataProvider {
 
 	@Override
 	protected Map<String, Map<String, Double>> callService(CryptoCurrencyDto cxCurrDto) {
-		// stopAndGo();
+		stopAndGo();
 		CoinGeckoApiClient client = new CoinGeckoApiClientImpl();
 		String cxCode = CGCxCodeEnum.getGCCode(cxCurrDto.getCode());
 		Map<String, Map<String, Double>> result = client.getPrice(cxCode, DEFAULT_EXCH_CURR);
@@ -67,7 +67,7 @@ public class CoinGeckoCryptoDataProvider extends CryptoDataProvider {
 				String cxCode = CGCxCodeEnum.getCode(cxCurr);
 				CryptoCurrencyDto cxCurrDto = cryptoCurrDao.findByCode(cxCode);
 				Double price = intraResult.get(cxCurr).get("eur");
-				return Arrays.asList(parseIntraDayData(price, cxCurrDto));
+				return List.of(parseIntraDayData(price, cxCurrDto));
 			} else {
 				errMsg = "Crypto currency not provided";
 			}
@@ -100,14 +100,13 @@ public class CoinGeckoCryptoDataProvider extends CryptoDataProvider {
 	 * Limitations due to free api key usage
 	 */
 	private static synchronized void stopAndGo() {
-		if (nRequests.getAndIncrement() % MAX_RQ == 0) {
-			try {
-				Thread.sleep(RQ_SLEEP);
-				nRequests.set(1);
-			} catch (InterruptedException e) {
-				LOG.error("Error sleeping thread", e);
-			}
+		try {
+			LOG.debug("Waiting {} ms", RQ_SLEEP);
+			Thread.sleep(RQ_SLEEP);
+		} catch (InterruptedException e) {
+			LOG.error("Error sleeping thread", e);
 		}
+
 	}
 
 	@Override

@@ -10,13 +10,11 @@ import static org.mockito.Mockito.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.assertj.core.util.Maps;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -85,12 +83,11 @@ class AlphaVantageCryptoDataProviderTest {
 
 		String cxCurr1 = "CXT1";
 		CryptoCurrencyDto cxCurr = new CryptoCurrencyDto(cxCurr1);
-		List<CryptoCurrencyDto> activeCxCurrs = new ArrayList<CryptoCurrencyDto>(Arrays.asList(cxCurr));
+		List<CryptoCurrencyDto> activeCxCurrs = List.of(cxCurr);
 
-		Map<String, String> metaData = new HashMap<>(
-				Maps.newHashMap(AlphaVantageCryptoDataProvider.getMdataCurrencyCode(), cxCurr1));
-		List<SimpleCryptoCurrencyData> digitalData = new ArrayList<>(Arrays
-				.asList(new SimpleCryptoCurrencyData(LocalDateTime.now(), 122.38, 123.45, 119.00, 120.54, 4562987)));
+		Map<String, String> metaData = Map.of(AlphaVantageCryptoDataProvider.getMdataCurrencyCode(), cxCurr1);
+		List<SimpleCryptoCurrencyData> digitalData = List
+				.of(new SimpleCryptoCurrencyData(LocalDateTime.now(), 122.38, 123.45, 119.00, 120.54, 4562987));
 		IntraDay intraDay = new IntraDay(metaData, digitalData);
 
 		AlphaVantageCryptoDataProvider avCxDataProvider = mock(AlphaVantageCryptoDataProvider.class);
@@ -98,7 +95,7 @@ class AlphaVantageCryptoDataProviderTest {
 
 		CryptoDataDto dto = new CryptoDataDto();
 		dto.setCxCurrencyDto(cxCurr);
-		List<CryptoDataDto> dataList = new ArrayList<CryptoDataDto>(Arrays.asList(dto, dto, dto));
+		List<CryptoDataDto> dataList = List.of(dto, dto, dto);
 		when(avCxDataProvider.mapIntraDayRs(intraDay)).thenReturn(dataList);
 
 		doCallRealMethod().when(avCxDataProvider).collectIntraDayData(activeCxCurrs);

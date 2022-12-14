@@ -12,13 +12,11 @@ import static org.mockito.ArgumentMatchers.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.assertj.core.util.Maps;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +50,7 @@ class CryptoDataEvalTest {
 
 		String cxCode1 = "CXT1";
 		CryptoCurrencyDto cxCurr1 = new CryptoCurrencyDto(cxCode1);
-		List<CryptoCurrencyDto> activeCxCurrs = new ArrayList<CryptoCurrencyDto>(Arrays.asList(cxCurr1));
+		List<CryptoCurrencyDto> activeCxCurrs = List.of(cxCurr1);
 
 		// If the map of data is empty, any prediction will be checked
 		cryptoDataEval.evaluatePredictions(new HashMap<>(), activeCxCurrs);
@@ -65,7 +63,7 @@ class CryptoDataEvalTest {
 		dataList.add(new CryptoDataDto(new CryptoCurrencyDto(cxCode1), readDate.minusMinutes(30), 100, 100, 100, 75));
 		dataList.add(new CryptoDataDto(new CryptoCurrencyDto(cxCode1), readDate.minusMinutes(45), 100, 100, 100, 75));
 		dataList.add(new CryptoDataDto(new CryptoCurrencyDto(cxCode1), readDate.minusMinutes(60), 100, 100, 100, 75));
-		Map<String, List<CryptoDataDto>> dataResult = new HashMap<>(Maps.newHashMap(cxCode1, dataList));
+		Map<String, List<CryptoDataDto>> dataResult = Map.of(cxCode1, dataList);
 
 		List<PredictionDto> unanalyzedData = new ArrayList<>();
 		LocalDateTime predDate = LocalDateTime.now().plusSeconds(10);

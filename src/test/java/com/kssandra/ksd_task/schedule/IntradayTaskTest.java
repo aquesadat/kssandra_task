@@ -12,8 +12,6 @@ import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +29,7 @@ import com.kssandra.ksd_persistence.dao.CryptoCurrencyDao;
 import com.kssandra.ksd_task.prediction.CryptoDataEval;
 import com.kssandra.ksd_task.prediction.CryptoDataPrediction;
 import com.kssandra.ksd_task.provider.CryptoDataProvider;
+import com.kssandra.ksd_task.provider.alphavantage.AlphaVantageCryptoDataProvider;
 
 /**
  * @author aquesada
@@ -51,7 +50,7 @@ class IntradayTaskTest {
 	@MockBean
 	protected CryptoCurrencyDao cryptoCurrDao;
 
-	@SpyBean
+	@SpyBean(AlphaVantageCryptoDataProvider.class)
 	CryptoDataProvider cxDataProvider;
 
 	/**
@@ -72,7 +71,7 @@ class IntradayTaskTest {
 		String cxCode2 = "CXT2";
 		CryptoCurrencyDto cxCurr1 = new CryptoCurrencyDto(cxCode1);
 		CryptoCurrencyDto cxCurr2 = new CryptoCurrencyDto(cxCode2);
-		List<CryptoCurrencyDto> activeCxCurrs = new ArrayList<CryptoCurrencyDto>(Arrays.asList(cxCurr1, cxCurr2));
+		List<CryptoCurrencyDto> activeCxCurrs = List.of(cxCurr1, cxCurr2);
 		when(cryptoCurrDao.getAllActiveCxCurrencies()).thenReturn(activeCxCurrs);
 		// when(cxDataProvider.collectIntraDayData(Collections.emptyList())).thenReturn(Collections.emptyMap());
 		doReturn(Collections.emptyMap()).when(cxDataProvider).collectIntraDayData(activeCxCurrs);

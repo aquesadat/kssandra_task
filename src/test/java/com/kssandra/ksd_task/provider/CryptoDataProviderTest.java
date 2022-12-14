@@ -12,13 +12,11 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.assertj.core.util.Maps;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,7 +38,7 @@ import com.kssandra.ksd_task.provider.alphavantage.AlphaVantageCryptoDataProvide
 @SpringBootTest
 class CryptoDataProviderTest {
 
-	@SpyBean
+	@SpyBean(AlphaVantageCryptoDataProvider.class)
 	CryptoDataProvider cryptoDataProvider;
 
 	@MockBean
@@ -59,14 +57,12 @@ class CryptoDataProviderTest {
 
 		CryptoCurrencyDto cxCurr1 = new CryptoCurrencyDto(cxCode1);
 		CryptoCurrencyDto cxCurr2 = new CryptoCurrencyDto(cxCode2);
-		List<CryptoCurrencyDto> activeCxCurrs = new ArrayList<CryptoCurrencyDto>(Arrays.asList(cxCurr1, cxCurr2));
+		List<CryptoCurrencyDto> activeCxCurrs = List.of(cxCurr1, cxCurr2);
 
-		Map<String, String> metaData1 = new HashMap<>(
-				Maps.newHashMap(AlphaVantageCryptoDataProvider.getMdataCurrencyCode(), cxCode1));
-		Map<String, String> metaData2 = new HashMap<>(
-				Maps.newHashMap(AlphaVantageCryptoDataProvider.getMdataCurrencyCode(), cxCode2));
-		List<SimpleCryptoCurrencyData> digitalData = new ArrayList<>(Arrays
-				.asList(new SimpleCryptoCurrencyData(LocalDateTime.now(), 122.38, 123.45, 119.00, 120.54, 4562987)));
+		Map<String, String> metaData1 = Map.of(AlphaVantageCryptoDataProvider.getMdataCurrencyCode(), cxCode1);
+		Map<String, String> metaData2 = Map.of(AlphaVantageCryptoDataProvider.getMdataCurrencyCode(), cxCode2);
+		List<SimpleCryptoCurrencyData> digitalData = List
+				.of(new SimpleCryptoCurrencyData(LocalDateTime.now(), 122.38, 123.45, 119.00, 120.54, 4562987));
 		IntraDay intraDay1 = new IntraDay(metaData1, digitalData);
 		IntraDay intraDay2 = new IntraDay(metaData2, digitalData);
 
@@ -77,8 +73,8 @@ class CryptoDataProviderTest {
 		dto1.setCxCurrencyDto(cxCurr1);
 		CryptoDataDto dto2 = new CryptoDataDto();
 		dto2.setCxCurrencyDto(cxCurr2);
-		List<CryptoDataDto> dataList1 = new ArrayList<CryptoDataDto>(Arrays.asList(dto1, dto1, dto1));
-		List<CryptoDataDto> dataList2 = new ArrayList<CryptoDataDto>(Arrays.asList(dto2, dto2));
+		List<CryptoDataDto> dataList1 = List.of(dto1, dto1, dto1);
+		List<CryptoDataDto> dataList2 = List.of(dto2, dto2);
 		doReturn(dataList1).when(cryptoDataProvider).mapIntraDayRs(intraDay1);
 		doReturn(dataList2).when(cryptoDataProvider).mapIntraDayRs(intraDay2);
 
@@ -133,7 +129,7 @@ class CryptoDataProviderTest {
 		dataResult.put(cxCode1, cxData1);
 		dataResult.put(cxCode2, cxData2);
 
-		cryptoDataProvider.saveDataResult(dataResult, new ArrayList<>(Arrays.asList(cxCurr1, cxCurr2)));
+		cryptoDataProvider.saveDataResult(dataResult, List.of(cxCurr1, cxCurr2));
 
 		ArgumentCaptor<List<CryptoDataDto>> captor = ArgumentCaptor.forClass(List.class);
 		verify(cryptoDataDao).saveAll(captor.capture());

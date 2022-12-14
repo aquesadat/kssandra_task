@@ -6,7 +6,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -18,6 +17,7 @@ import com.kssandra.ksd_common.dto.CryptoCurrencyDto;
 import com.kssandra.ksd_common.dto.CryptoDataDto;
 import com.kssandra.ksd_common.enums.DataProviderEnum;
 import com.kssandra.ksd_common.exception.DataCollectException;
+import com.kssandra.ksd_common.logger.KSDLoggerFactory;
 import com.kssandra.ksd_common.util.DateUtils;
 import com.kssandra.ksd_persistence.dao.CryptoCurrencyDao;
 import com.kssandra.ksd_task.provider.CryptoDataProvider;
@@ -31,7 +31,7 @@ import com.kssandra.ksd_task.provider.CryptoDataProvider;
 @Component
 public class AlphaVantageCryptoDataProvider extends CryptoDataProvider {
 
-	private static final Logger LOG = LoggerFactory.getLogger(AlphaVantageCryptoDataProvider.class);
+	private static final Logger LOG = KSDLoggerFactory.getLogger();
 
 	@Value("${alphavantage.connect.baseurl}")
 	private String baseUrl;

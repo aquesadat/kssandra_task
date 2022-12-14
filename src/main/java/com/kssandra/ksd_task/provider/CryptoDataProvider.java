@@ -12,13 +12,13 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.kssandra.ksd_common.dto.CryptoCurrencyDto;
 import com.kssandra.ksd_common.dto.CryptoDataDto;
 import com.kssandra.ksd_common.exception.DataCollectException;
+import com.kssandra.ksd_common.logger.KSDLoggerFactory;
 import com.kssandra.ksd_persistence.dao.CryptoDataDao;
 
 /**
@@ -33,7 +33,7 @@ public abstract class CryptoDataProvider {
 	@Autowired
 	private CryptoDataDao cryptoDataDao;
 
-	private static final Logger LOG = LoggerFactory.getLogger(CryptoDataProvider.class);
+	private static final Logger LOG = KSDLoggerFactory.getLogger();
 
 	/**
 	 * Gets intraday data concurrently from the provider and persists it in DB

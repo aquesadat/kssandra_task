@@ -7,12 +7,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.kssandra.ksd_common.dto.CryptoCurrencyDto;
 import com.kssandra.ksd_common.dto.PredictionDto;
+import com.kssandra.ksd_common.logger.KSDLoggerFactory;
 import com.kssandra.ksd_common.util.DateUtils;
 import com.kssandra.ksd_common.dto.CryptoDataDto;
 import com.kssandra.ksd_persistence.dao.CryptoDataDao;
@@ -28,7 +28,7 @@ import com.kssandra.ksd_persistence.dao.PredictionDao;
 @Component
 public class CryptoDataEval {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CryptoDataEval.class);
+	private static final Logger LOG = KSDLoggerFactory.getLogger();
 
 	@Autowired
 	private PredictionDao predictionDao;
