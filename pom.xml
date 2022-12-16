@@ -13,18 +13,18 @@
 
 	<groupId>com.kssandra</groupId>
 	<artifactId>ksd_task</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.3-SNAPSHOT</version>
 	<packaging>war</packaging>
 
 	<name>ksd_task</name>
 	<description>Kssandra Tasks</description>
 
 	<properties>
-		<java.version>1.11</java.version>
-		<ksd.persistence.version>0.0.3-SNAPSHOT</ksd.persistence.version>
+		<java.version>1.17</java.version>
+		<ksd.persistence.version>0.0.4-SNAPSHOT</ksd.persistence.version>
 		<ksd.alphavantage_client.version>0.0.2-SNAPSHOT</ksd.alphavantage_client.version>
 		<ksd.coingecko_client.version>0.0.1-SNAPSHOT</ksd.coingecko_client.version>
-		<ksd.core.version>0.0.3-SNAPSHOT</ksd.core.version>
+		<ksd.core.version>0.0.4-SNAPSHOT</ksd.core.version>
 	</properties>
 	<dependencies>
 
