@@ -52,10 +52,10 @@ public class CryptoDataPrediction {
 		List<PredictionCfgDto> activeCfgs = predictionCfgDao.findAllActive();
 
 		activeCfgs.forEach(predictCfg -> {
-			if (predictCfgs.containsKey(predictCfg.getAdvance())) {
-				predictCfgs.get(predictCfg.getAdvance()).add(predictCfg.getSampleSize());
+			if (predictCfgs.containsKey(predictCfg.advance())) {
+				predictCfgs.get(predictCfg.advance()).add(predictCfg.sampleSize());
 			} else {
-				predictCfgs.put(predictCfg.getAdvance(), new ArrayList<>(Arrays.asList(predictCfg.getSampleSize())));
+				predictCfgs.put(predictCfg.advance(), new ArrayList<>(Arrays.asList(predictCfg.sampleSize())));
 			}
 		});
 
@@ -96,7 +96,7 @@ public class CryptoDataPrediction {
 						predictions.add(prediction);
 					} catch (Exception ex) {
 						LOG.error("Error processing sampleSize: {}, advance: {} and cxCurr: {}", sampleSize, advance,
-								dataToAnalyze.get(0).getCxCurrencyDto().getCode(), ex);
+								dataToAnalyze.get(0).getCxCurrencyDto().code(), ex);
 					}
 
 				}));

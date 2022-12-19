@@ -61,7 +61,7 @@ class CryptoDataPredictionTest {
 
 		// If there isn´t data to analyze, any prediction will be saved
 		String cxCode1 = "CXT1";
-		CryptoCurrencyDto cxCurr1 = new CryptoCurrencyDto(cxCode1);
+		CryptoCurrencyDto cxCurr1 = new CryptoCurrencyDto(cxCode1, null, null, false);
 		List<CryptoCurrencyDto> activeCxCurrs = List.of(cxCurr1);
 		List<CryptoDataDto> dataToAnalyze = new ArrayList<>();
 		when(cryptoDataDao.getDataToAnalyze(cxCurr1)).thenReturn(dataToAnalyze);
@@ -71,7 +71,7 @@ class CryptoDataPredictionTest {
 
 		// When there´s data to analyze but an exception occurs during execution
 		CryptoDataDto cxData = new CryptoDataDto();
-		cxData.setCxCurrencyDto(new CryptoCurrencyDto(cxCode1));
+		cxData.setCxCurrencyDto(new CryptoCurrencyDto(cxCode1, null, null, false));
 		cxData.setReadTime(LocalDateTime.now());
 		cxData.setHigh(100);
 		cxData.setLow(75);
@@ -88,7 +88,7 @@ class CryptoDataPredictionTest {
 
 		List<CryptoDataDto> dataToAnalyze = new ArrayList<>();
 		String cxCode1 = "CXT1";
-		CryptoCurrencyDto cxCurr1 = new CryptoCurrencyDto(cxCode1);
+		CryptoCurrencyDto cxCurr1 = new CryptoCurrencyDto(cxCode1, null, null, false);
 		List<CryptoCurrencyDto> activeCxCurrs = List.of(cxCurr1);
 
 		when(cryptoDataDao.getDataToAnalyze(cxCurr1)).thenReturn(dataToAnalyze);
@@ -100,7 +100,7 @@ class CryptoDataPredictionTest {
 		verify(predictionDao).saveAll(captor.capture());
 		List<PredictionDto> dataToSave = captor.getValue();
 		assertFalse(dataToSave.isEmpty());
-		assertTrue(dataToSave.stream().allMatch(d -> (d.getCxCurrencyDto().getCode().equals("CXT1")
+		assertTrue(dataToSave.stream().allMatch(d -> (d.getCxCurrencyDto().code().equals("CXT1")
 				&& d.getPredictTime() != null && d.getPredictVal() > 0 && d.getSampleSize() > 0)));
 	}
 
@@ -108,7 +108,7 @@ class CryptoDataPredictionTest {
 
 		for (int i = 0; i < 3000; i++) {
 			CryptoDataDto cxData = new CryptoDataDto();
-			cxData.setCxCurrencyDto(new CryptoCurrencyDto(cxCode));
+			cxData.setCxCurrencyDto(new CryptoCurrencyDto(cxCode, null, null, false));
 			cxData.setReadTime(LocalDateTime.now().minusMinutes(i * 15));
 			cxData.setHigh(100);
 			cxData.setLow(75);

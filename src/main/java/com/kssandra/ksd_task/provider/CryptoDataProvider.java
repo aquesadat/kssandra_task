@@ -49,7 +49,7 @@ public abstract class CryptoDataProvider {
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info("Getting data from {} for: {}", this.getType(),
-					activeCxCurrs.stream().map(CryptoCurrencyDto::getCode).collect(Collectors.joining(", ")));
+					activeCxCurrs.stream().map(CryptoCurrencyDto::code).collect(Collectors.joining(", ")));
 		}
 
 		// Preparing for a new batch of executions
@@ -63,8 +63,8 @@ public abstract class CryptoDataProvider {
 		for (Future<?> result : results) {
 			try {
 				List<CryptoDataDto> dataList = mapIntraDayRs(result.get());
-				cryptoData.put(dataList.get(0).getCxCurrencyDto().getCode(), dataList);
-				LOG.info("Data already obtained and mapped for: {}", dataList.get(0).getCxCurrencyDto().getCode());
+				cryptoData.put(dataList.get(0).getCxCurrencyDto().code(), dataList);
+				LOG.info("Data already obtained and mapped for: {}", dataList.get(0).getCxCurrencyDto().code());
 			} catch (InterruptedException ie) {
 				LOG.error("Interrupted", ie);
 				Thread.currentThread().interrupt();

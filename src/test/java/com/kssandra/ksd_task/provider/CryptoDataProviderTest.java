@@ -55,8 +55,8 @@ class CryptoDataProviderTest {
 	@Test
 	void testCollectIntraDayData() throws DataCollectException {
 
-		CryptoCurrencyDto cxCurr1 = new CryptoCurrencyDto(cxCode1);
-		CryptoCurrencyDto cxCurr2 = new CryptoCurrencyDto(cxCode2);
+		CryptoCurrencyDto cxCurr1 = new CryptoCurrencyDto(cxCode1, null, null, false);
+		CryptoCurrencyDto cxCurr2 = new CryptoCurrencyDto(cxCode2, null, null, false);
 		List<CryptoCurrencyDto> activeCxCurrs = List.of(cxCurr1, cxCurr2);
 
 		Map<String, String> metaData1 = Map.of(AlphaVantageCryptoDataProvider.getMdataCurrencyCode(), cxCode1);
@@ -108,8 +108,8 @@ class CryptoDataProviderTest {
 	@Test
 	void testSaveDataResult() {
 
-		CryptoCurrencyDto cxCurr1 = new CryptoCurrencyDto(cxCode1);
-		CryptoCurrencyDto cxCurr2 = new CryptoCurrencyDto(cxCode2);
+		CryptoCurrencyDto cxCurr1 = new CryptoCurrencyDto(cxCode1, null, null, false);
+		CryptoCurrencyDto cxCurr2 = new CryptoCurrencyDto(cxCode2, null, null, false);
 
 		Map<String, LocalDateTime> lastInserted = new HashMap<>();
 		lastInserted.put(cxCode1, LocalDateTime.now().minusDays(1));
@@ -138,11 +138,11 @@ class CryptoDataProviderTest {
 
 		// Only 2 cyrptoDataDto will be saved for CXT1 because one of the 3 initial has
 		// its readDate before lastInsertedDate
-		assertEquals(2, dataToSave.stream().filter(elem -> elem.getCxCurrencyDto().getCode().equals(cxCode1)).count());
+		assertEquals(2, dataToSave.stream().filter(elem -> elem.getCxCurrencyDto().code().equals(cxCode1)).count());
 
 		// All 3 cryptoDataDto will be saved for CXT2 because no previous data was
 		// inserted in DB (no lastInserted date exists for CXT2).
-		assertEquals(3, dataToSave.stream().filter(elem -> elem.getCxCurrencyDto().getCode().equals(cxCode2)).count());
+		assertEquals(3, dataToSave.stream().filter(elem -> elem.getCxCurrencyDto().code().equals(cxCode2)).count());
 
 	}
 

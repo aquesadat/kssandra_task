@@ -54,7 +54,7 @@ class AlphaVantageCryptoDataProviderTest {
 	@Test
 	void testCallService() {
 
-		CryptoCurrencyDto cxCurrDto = new CryptoCurrencyDto("CXT", "Crypto Currency Test", new AVAccountDto(), true);
+		CryptoCurrencyDto cxCurrDto = new CryptoCurrencyDto("CXT", "Crypto Currency Test", new AVAccountDto(null, null), true);
 
 		// If maxRq is exceeded, application should wait some time (rqSleep) until call
 		// service again
@@ -82,7 +82,7 @@ class AlphaVantageCryptoDataProviderTest {
 		assertEquals(1, AlphaVantageCryptoDataProvider.getnRequests().get());
 
 		String cxCurr1 = "CXT1";
-		CryptoCurrencyDto cxCurr = new CryptoCurrencyDto(cxCurr1);
+		CryptoCurrencyDto cxCurr = new CryptoCurrencyDto(cxCurr1, null, null, false);
 		List<CryptoCurrencyDto> activeCxCurrs = List.of(cxCurr);
 
 		Map<String, String> metaData = Map.of(AlphaVantageCryptoDataProvider.getMdataCurrencyCode(), cxCurr1);
@@ -135,7 +135,7 @@ class AlphaVantageCryptoDataProviderTest {
 		assertThrows(DataCollectException.class, () -> avDataProvider.mapIntraDayRs(new IntraDay(metaData2, null)),
 				"Error mapping response from AlphaVantage: DigitalData is null or empty");
 
-		when(cryptoCurrDao.findByCode("CXT")).thenReturn(new CryptoCurrencyDto());
+		when(cryptoCurrDao.findByCode("CXT")).thenReturn(new CryptoCurrencyDto(null, null, null, false));
 		Map<String, String> metaData3 = new HashMap<>();
 		metaData3.put(AlphaVantageCryptoDataProvider.getMdataCurrencyCode(), "CXT");
 		List<SimpleCryptoCurrencyData> digitalData1 = null;
@@ -143,7 +143,7 @@ class AlphaVantageCryptoDataProviderTest {
 				() -> avDataProvider.mapIntraDayRs(new IntraDay(metaData3, digitalData1)),
 				"Error mapping response from AlphaVantage: DigitalData is null or empty");
 
-		when(cryptoCurrDao.findByCode("CXT")).thenReturn(new CryptoCurrencyDto());
+		when(cryptoCurrDao.findByCode("CXT")).thenReturn(new CryptoCurrencyDto(null, null, null, false));
 		List<SimpleCryptoCurrencyData> digitalData2 = new ArrayList<>();
 		assertThrows(DataCollectException.class,
 				() -> avDataProvider.mapIntraDayRs(new IntraDay(metaData3, digitalData2)),
@@ -151,7 +151,7 @@ class AlphaVantageCryptoDataProviderTest {
 
 		// Testing OK case
 		String cxCode = "CXT";
-		CryptoCurrencyDto cxCurrDto = new CryptoCurrencyDto(cxCode);
+		CryptoCurrencyDto cxCurrDto = new CryptoCurrencyDto(cxCode, null, null, false);
 		List<SimpleCryptoCurrencyData> digitalData3 = new ArrayList<>();
 		LocalDateTime readtime = LocalDateTime.now();
 		digitalData3.add(new SimpleCryptoCurrencyData(readtime, 122.38, 123.45, 119.00, 120.54, 4562987));
@@ -161,7 +161,7 @@ class AlphaVantageCryptoDataProviderTest {
 		assertFalse(result.isEmpty());
 		CryptoDataDto resultData = result.get(0);
 		assertNotNull(resultData.getCxCurrencyDto());
-		assertEquals(cxCode, resultData.getCxCurrencyDto().getCode());
+		assertEquals(cxCode, resultData.getCxCurrencyDto().code());
 		double[] expected = { 122.38, 123.45, 119.00, 120.54 };
 		double[] actual = { resultData.getOpen(), resultData.getHigh(), resultData.getLow(), resultData.getClose() };
 		assertArrayEquals(expected, actual);

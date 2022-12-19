@@ -49,7 +49,7 @@ class CryptoDataEvalTest {
 	void testEvaluatePredictions() {
 
 		String cxCode1 = "CXT1";
-		CryptoCurrencyDto cxCurr1 = new CryptoCurrencyDto(cxCode1);
+		CryptoCurrencyDto cxCurr1 = new CryptoCurrencyDto(cxCode1, null, null, false);
 		List<CryptoCurrencyDto> activeCxCurrs = List.of(cxCurr1);
 
 		// If the map of data is empty, any prediction will be checked
@@ -58,11 +58,11 @@ class CryptoDataEvalTest {
 
 		List<CryptoDataDto> dataList = new ArrayList<>();
 		LocalDateTime readDate = LocalDateTime.now();
-		dataList.add(new CryptoDataDto(new CryptoCurrencyDto(cxCode1), readDate, 100, 100, 100, 75));
-		dataList.add(new CryptoDataDto(new CryptoCurrencyDto(cxCode1), readDate.minusMinutes(15), 100, 100, 100, 75));
-		dataList.add(new CryptoDataDto(new CryptoCurrencyDto(cxCode1), readDate.minusMinutes(30), 100, 100, 100, 75));
-		dataList.add(new CryptoDataDto(new CryptoCurrencyDto(cxCode1), readDate.minusMinutes(45), 100, 100, 100, 75));
-		dataList.add(new CryptoDataDto(new CryptoCurrencyDto(cxCode1), readDate.minusMinutes(60), 100, 100, 100, 75));
+		dataList.add(new CryptoDataDto(new CryptoCurrencyDto(cxCode1, null, null, false), readDate, 100, 100, 100, 75));
+		dataList.add(new CryptoDataDto(new CryptoCurrencyDto(cxCode1, null, null, false), readDate.minusMinutes(15), 100, 100, 100, 75));
+		dataList.add(new CryptoDataDto(new CryptoCurrencyDto(cxCode1, null, null, false), readDate.minusMinutes(30), 100, 100, 100, 75));
+		dataList.add(new CryptoDataDto(new CryptoCurrencyDto(cxCode1, null, null, false), readDate.minusMinutes(45), 100, 100, 100, 75));
+		dataList.add(new CryptoDataDto(new CryptoCurrencyDto(cxCode1, null, null, false), readDate.minusMinutes(60), 100, 100, 100, 75));
 		Map<String, List<CryptoDataDto>> dataResult = Map.of(cxCode1, dataList);
 
 		List<PredictionDto> unanalyzedData = new ArrayList<>();

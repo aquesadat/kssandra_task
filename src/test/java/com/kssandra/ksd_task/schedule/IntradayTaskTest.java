@@ -69,8 +69,8 @@ class IntradayTaskTest {
 		// If no data is recovered from provider, no prediction will be made
 		String cxCode1 = "CXT1";
 		String cxCode2 = "CXT2";
-		CryptoCurrencyDto cxCurr1 = new CryptoCurrencyDto(cxCode1);
-		CryptoCurrencyDto cxCurr2 = new CryptoCurrencyDto(cxCode2);
+		CryptoCurrencyDto cxCurr1 = new CryptoCurrencyDto(cxCode1, null, null, false);
+		CryptoCurrencyDto cxCurr2 = new CryptoCurrencyDto(cxCode2, null, null, false);
 		List<CryptoCurrencyDto> activeCxCurrs = List.of(cxCurr1, cxCurr2);
 		when(cryptoCurrDao.getAllActiveCxCurrencies()).thenReturn(activeCxCurrs);
 		// when(cxDataProvider.collectIntraDayData(Collections.emptyList())).thenReturn(Collections.emptyMap());

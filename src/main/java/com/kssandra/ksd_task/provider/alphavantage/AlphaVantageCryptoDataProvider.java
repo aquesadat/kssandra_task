@@ -68,8 +68,8 @@ public class AlphaVantageCryptoDataProvider extends CryptoDataProvider {
 	@Override
 	protected IntraDay callService(CryptoCurrencyDto cxCurrDto) {
 		stopAndGo();// Rq limits due to free api key
-		return avService.intraDay(cxCurrDto.getCode(), DEFAULT_EXCH_CURR, interval,
-				cxCurrDto.getAvAccountDto().getApiKey(), timeout, baseUrl, outputSize);
+		return avService.intraDay(cxCurrDto.code(), DEFAULT_EXCH_CURR, interval, cxCurrDto.avAccountDto().apiKey(),
+				timeout, baseUrl, outputSize);
 	}
 
 	@Override

@@ -64,7 +64,7 @@ public class CryptoDataEval {
 
 			// Gets from DB all the unanalyzed predictions for a specific cryptocurrency and
 			// before or equals to last data read from provider
-			CryptoCurrencyDto cxCurrDto = activeCxCurrs.parallelStream().filter(elem -> elem.getCode().equals(cxCode))
+			CryptoCurrencyDto cxCurrDto = activeCxCurrs.parallelStream().filter(elem -> elem.code().equals(cxCode))
 					.findAny().get();
 			List<PredictionDto> predictions = predictionDao.findUnanalyzed(cxCurrDto, predictTime);
 

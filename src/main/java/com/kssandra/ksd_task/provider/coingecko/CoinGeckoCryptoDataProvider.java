@@ -8,7 +8,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import com.kssandra.ksd_common.dto.CryptoCurrencyDto;
@@ -50,7 +49,7 @@ public class CoinGeckoCryptoDataProvider extends CryptoDataProvider {
 	protected Map<String, Map<String, Double>> callService(CryptoCurrencyDto cxCurrDto) {
 		stopAndGo();
 		CoinGeckoApiClient client = new CoinGeckoApiClientImpl();
-		String cxCode = CGCxCodeEnum.getGCCode(cxCurrDto.getCode());
+		String cxCode = CGCxCodeEnum.getGCCode(cxCurrDto.code());
 		Map<String, Map<String, Double>> result = client.getPrice(cxCode, DEFAULT_EXCH_CURR);
 		client.shutdown();
 		return result;
