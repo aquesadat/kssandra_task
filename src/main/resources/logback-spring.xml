@@ -7,10 +7,10 @@
 	</appender>
 
 	<appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="rollingFile">
-		<file>/logs/ksd_task.log</file>
+		<file>/apps/logs/ksd_task.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<!-- rollover daily -->
-			<fileNamePattern>/logs/history/ksd_task-%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+			<fileNamePattern>/apps/logs/history/ksd_task-%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
 			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
 				<!-- or whenever the file size reaches 10MB -->
 				<maxFileSize>10MB</maxFileSize>

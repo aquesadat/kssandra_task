@@ -14,7 +14,7 @@
 	<groupId>com.kssandra</groupId>
 	<artifactId>ksd_task</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 
 	<name>ksd_task</name>
 	<description>Kssandra Tasks</description>
