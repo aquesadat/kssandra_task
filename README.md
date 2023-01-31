@@ -2,7 +2,7 @@
 
 ## Descripción
 Aplicación Java para obtener datos de cotización de las principales criptomonedas y calcular predicciones de precio a corto plazo en base a estas. 
-La predición mínima se encuentra en 15min mientras que la máxima es 24h.
+La predición mínima se encuentra en 15min mientras que la máxima es 24h.<br>
 Cada predicción se acompaña de un % de fiabilidad basado en resultados anteriores.
 Toda la información procesada por esta aplicación es obtenida vía WS de provedores como AlphaVantage y/o Coingecko y es almacenada en BBDD.
 
