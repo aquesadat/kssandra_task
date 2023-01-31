@@ -1,21 +1,21 @@
 # kssandra_task
 
 ## Descripción
-Aplicación Java para obtener datos de cotización de las principales criptomonedas y calcular predicciones de precio a corto plazo en base a estas. 
+Aplicación Java para la obtención de datos de cotización de las principales criptomonedas y el cálculo de predicciones de precio a corto plazo.<br>
 La predición mínima se encuentra en 15min mientras que la máxima es 24h.<br>
-Cada predicción se acompaña de un % de fiabilidad basado en resultados anteriores.
-Toda la información procesada por esta aplicación es obtenida vía WS de provedores como AlphaVantage y/o Coingecko y es almacenada en BBDD.
+Cada predicción es evaluada y asociada a un % de fiabilidad en base a resultados anteriores.<br>
+La aplicación recibe como entrada información proveniente de distintos proveedores, obtenida a través de peticiones REST. La información resultante del procesamiento es almacenada en BBDD. Esta se podrá consultar a traves de la API REST del módulo [kassandra_ws](https://github.com/aquesadat/kssandra_ws "kassandra_ws")
 
 ## Funcionamiento
-De manera planificada (Spring Task Scheduler) se ejecuta una tarea encargada de realizar las siguientes acciones: 
-1. Obtener proveedor de información activo. Actualmente Coingecko y AlphaVantage.
-2.  Obtener criptomonedas configuradas. Actualmente: 
+Una tarea planificada (Spring Task Scheduler) es ejecutada indefinidamente realizando las siguientes acciones:
+1. Obtener proveedor de información activo. Actualmente uno de estos: [Coingecko](https://www.coingecko.com/ "Coingecko") y [AlphaVantage](https://www.alphavantage.co/ "AlphaVantage").
+2. Obtener criptomonedas activas (configuradas en BBDD)
 3. Mediante un thread pool, de manera concurrente para cada cryptomoneda se realizan las siguientes acciones:
-	- Obtención de los datos de cotización actual. 
-	- Cálculo de predicciones. (módulo ksd_core)
-	- Evaluación de predicciones anteriores en base a los resultados reales obtenidos.
-4. Toda la información obtenida en el punto anterior se persiste en una bbdd MySQL (ksd_persistence)
-
+	- Llamada REST para la obtención de datos de cotización actual del proveedor activo. 
+	- Cálculo de predicciones en base a la información previamente obtenido y a la ya persistida en BBDD. (módulo [kssandra_core](https://github.com/aquesadat/kssandra_core "kssandra_core"))
+	- Evaluación de predicciones anteriores en base a los resultados reales obtenidos a fin de determinar la precicisión de la predicción.
+4. Toda la información obtenida en el punto anterior se persiste en una bbdd MySQL (módulo [kssandra_persistence](https://github.com/aquesadat/kssandra_persistence "kssandra_persistence"))
+5. Mantenimiento BBDD: Se eliminan todos los registros que por antigüedad ya no intervengan en el cálculo de predicciones.
 
 
 ## Esquema
