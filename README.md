@@ -1,7 +1,7 @@
 # kssandra_task
 
 ## Descripción
-Aplicación Java para la obtención de datos de cotización de las principales criptomonedas y el cálculo de predicciones de precio a corto plazo.<br>
+Aplicación Java basada en SpringBoot para la obtención de datos de cotización de las principales criptomonedas y el cálculo de predicciones de precio a corto plazo.<br>
 La predición mínima se encuentra en 15min mientras que la máxima es 24h.<br>
 Cada predicción es evaluada y asociada a un % de fiabilidad en base a resultados anteriores.<br>
 La aplicación recibe como entrada información proveniente de distintos proveedores, obtenida a través de peticiones REST. La información resultante del procesamiento es almacenada en BBDD. Esta se podrá consultar a traves de la API REST del módulo [kassandra_ws](https://github.com/aquesadat/kssandra_ws "kassandra_ws")
