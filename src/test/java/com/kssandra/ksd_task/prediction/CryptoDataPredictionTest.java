@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -49,59 +51,79 @@ class CryptoDataPredictionTest {
 	@MockBean
 	PredictionCfgDao predictionCfgDao;
 
+	final String cxCode1 = "CXT1";
+
+	CryptoCurrencyDto cxCurr1;
+
+	List<CryptoCurrencyDto> activeCxCurrs;
+
+	@BeforeEach
+	void initializeParams() {
+		cxCurr1 = new CryptoCurrencyDto(cxCode1);
+		activeCxCurrs = new ArrayList<CryptoCurrencyDto>(Arrays.asList(cxCurr1));
+	}
+
 	/**
 	 * Test method for
 	 * {@link com.kssandra.ksd_task.prediction.CryptoDataPrediction#predictResults(java.util.List)}.
 	 */
 	@Test
-	void testPredictResultsCaseKO() {
-
-		// If the list of active cx currencies is empty, any prediction will be saved
+	@DisplayName("No cxcurrencies active, any prediction will be saved")
+	void testPredictResultsCaseNoActiveCxs() {
 		cryptoDataPrediction.predictResults(new ArrayList<>());
-		verify(predictionDao, never()).saveAll(Mockito.anyList());
 
-		// If there isn´t data to analyze, any prediction will be saved
-		String cxCode1 = "CXT1";
-		CryptoCurrencyDto cxCurr1 = new CryptoCurrencyDto(cxCode1);
-		List<CryptoCurrencyDto> activeCxCurrs = new ArrayList<CryptoCurrencyDto>(Arrays.asList(cxCurr1));
-		List<CryptoDataDto> dataToAnalyze = new ArrayList<>();
-		when(cryptoDataDao.getDataToAnalyze(cxCurr1)).thenReturn(dataToAnalyze);
+		verify(predictionDao, never()).saveAll(Mockito.anyList());
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.kssandra.ksd_task.prediction.CryptoDataPrediction#predictResults(java.util.List)}.
+	 */
+	@Test
+	@DisplayName("No data to analyze, any prediction will be saved")
+	void testPredictResultsCaseNoData() {
+		when(cryptoDataDao.getDataToAnalyze(cxCurr1)).thenReturn(new ArrayList<>());
 
 		cryptoDataPrediction.predictResults(activeCxCurrs);
-		verify(predictionDao, never()).saveAll(anyList());
 
-		// When there´s data to analyze but an exception occurs during execution
+		verify(predictionDao, never()).saveAll(anyList());
+	}
+
+	@Test
+	@DisplayName("There is data to analyze, try to save")
+	void testPredictResultsCaseExceptionAnalyzing() {
+		List<CryptoDataDto> dataToAnalyze = new ArrayList<>();
+
 		CryptoDataDto cxData = new CryptoDataDto();
 		cxData.setCxCurrencyDto(new CryptoCurrencyDto(cxCode1));
 		cxData.setReadTime(LocalDateTime.now());
 		cxData.setHigh(100);
 		cxData.setLow(75);
 		dataToAnalyze.add(cxData);
+		when(cryptoDataDao.getDataToAnalyze(cxCurr1)).thenReturn(dataToAnalyze);
 		when(predictionCfgDao.findAllActive()).thenReturn(getActivePredictionsCfg());
+
 		cryptoDataPrediction.predictResults(activeCxCurrs);
 
 		verify(predictionDao, atLeast(1)).saveAll(anyList());
-
 	}
 
 	@Test
+	@DisplayName("There is data to analyze, check info to save")
 	void testPredictResultsCaseOK() {
 
 		List<CryptoDataDto> dataToAnalyze = new ArrayList<>();
-		String cxCode1 = "CXT1";
-		CryptoCurrencyDto cxCurr1 = new CryptoCurrencyDto(cxCode1);
-		List<CryptoCurrencyDto> activeCxCurrs = new ArrayList<CryptoCurrencyDto>(Arrays.asList(cxCurr1));
-
 		when(cryptoDataDao.getDataToAnalyze(cxCurr1)).thenReturn(dataToAnalyze);
-
 		loadTestData(dataToAnalyze, cxCode1);
 		when(predictionCfgDao.findAllActive()).thenReturn(getActivePredictionsCfg());
+
 		cryptoDataPrediction.predictResults(activeCxCurrs);
+
 		ArgumentCaptor<List<PredictionDto>> captor = ArgumentCaptor.forClass(List.class);
 		verify(predictionDao).saveAll(captor.capture());
 		List<PredictionDto> dataToSave = captor.getValue();
 		assertFalse(dataToSave.isEmpty());
-		assertTrue(dataToSave.stream().allMatch(d -> (d.getCxCurrencyDto().getCode().equals("CXT1")
+		assertTrue(dataToSave.stream().allMatch(d -> (d.getCxCurrencyDto().getCode().equals(cxCode1)
 				&& d.getPredictTime() != null && d.getPredictVal() > 0 && d.getSampleSize() > 0)));
 	}
 
