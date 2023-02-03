@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+<<<<<<< HEAD
+=======
+
+### Config files ###
+/application.properties
+>>>>>>> branch 'master' of https://github.com/aquesadat/kssandra_task.git
