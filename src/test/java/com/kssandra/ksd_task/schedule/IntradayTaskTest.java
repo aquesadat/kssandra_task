@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.kssandra.ksd_task.schedule;
 
 import static org.mockito.Mockito.atLeast;
