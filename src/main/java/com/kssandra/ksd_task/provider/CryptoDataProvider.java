@@ -41,7 +41,7 @@ public abstract class CryptoDataProvider {
 	 * @param activeCxCurrs
 	 * @return
 	 */
-	public Map<String, List<CryptoDataDto>> collectIntraDayData(List<CryptoCurrencyDto> activeCxCurrs) {
+	public final Map<String, List<CryptoDataDto>> collectIntraDayData(List<CryptoCurrencyDto> activeCxCurrs) {
 
 		ExecutorService pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 		List<Future<?>> results = new ArrayList<>();
@@ -90,7 +90,8 @@ public abstract class CryptoDataProvider {
 	 *                      intraday data as value
 	 * @param activeCxCurrs List of active cryptocurrencies
 	 */
-	protected void saveDataResult(Map<String, List<CryptoDataDto>> dataResult, List<CryptoCurrencyDto> activeCxCurrs) {
+	protected final void saveDataResult(Map<String, List<CryptoDataDto>> dataResult,
+			List<CryptoCurrencyDto> activeCxCurrs) {
 
 		LOG.debug("Saving data results");
 
